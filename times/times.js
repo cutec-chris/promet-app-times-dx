@@ -1,42 +1,34 @@
-function RefreshTasks() {
-  siTasks.progressOn();
-  console.log("Refresh Tasks");
-  dsTasks.FillGrid(gTasks);
-  siTasks.progressOff();
+function RefreshTimes() {
+  siTimes.progressOn();
+  console.log("Refresh Times");
+  dsTimes.FillGrid(gTimes);
+  siTimes.progressOff();
 }
-function AddTask() {
-  console.log("New Task");
-  var aId = gTasks.uid();
-  //dsTasks.add({id:aId})
-  //gTasks.sync(dsTasks);
-  gTasks.addRow(aId,"");
-  gTasks.selectCell(gTasks.getRowIndex(aId),1);
+function AddEntry() {
+  console.log("New Entry");
+  var aId = gTimes.uid();
+  //dsTimes.add({id:aId})
+  //gTimes.sync(dsTimes);
+  gTimes.addRow(aId,"");
+  gTimes.selectCell(gTimes.getRowIndex(aId),1);
   window.setTimeout(function(){
-    gTasks.editCell();
-    gTasks.enableKeyboardSupport(true);
-    gTasks.setActive();
+    gTimes.editCell();
+    gTimes.enableKeyboardSupport(true);
+    gTimes.setActive();
   },1);
 }
-function SetSeen() {
-  gTasks.cells(gTasks.getSelectedRowId(),4).setValue(1);
-}
-function SetDone() {
-  gTasks.cells(gTasks.getSelectedRowId(),0).setValue(1);
-}
-var siTasks,tbToolbar,gTasks,dsTasks;
+var siTimes,tbToolbar,gTimes,dsTimes;
 
 dhtmlxEvent(window,"load",function(){
-  console.log("Loading Tasks Page...");
-  sbMain.addItem({id: 'siTasks', text: 'Aufgaben', icon: ''});
-  siTasks = window.parent.sbMain.cells('siTasks');
-  tbToolbar = siTasks.attachToolbar({
+  console.log("Loading Times Page...");
+  sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: ''});
+  siTimes = window.parent.sbMain.cells('siTimes');
+  tbToolbar = siTimes.attachToolbar({
     parent:"pToolbar",
       items:[
          {id: "new", type: "button", text: "Neu", img: "fa fa-plus-circle"}
         ,{id: "sep1", type: "separator" }
-        ,{id: "seen", type: "button", text: "Gesehen", img: "fa fa-eye"}
-        ,{id: "done", type: "button", text: "Erledigt", img: "fa fa-check"}
-        ,{id: "problem", type: "button", text: "Problem", img: "fa fa-exclamation-triangle"}
+        ,{id: "datea", type: "buttonInput"}
         ,{id: "sep1", type: "separator" }
         ,{id: "refresh", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
       ],
@@ -46,25 +38,19 @@ dhtmlxEvent(window,"load",function(){
     if (id=='new') {
       AddTask();
     } else if (id=='refresh') {
-      RefreshTasks();
-    } else if (id=='seen') {
-      SetSeen();
-    } else if (id=='done') {
-      SetDone();
+      RefreshTimes();
     }
 		});
-  gTasks = siTasks.attachGrid({parent:"pTasks"});
-  gTasks.setImagePath("codebase/imgs/");
-  //gTasks.enableAutoWidth(true);
-  //gTasks.enableAutoHeight(true);
-  gTasks.setSizes();
-  gTasks.setHeader(["erledigt","Aufgabe","Projekt","Bis","gesehen","Reihenfolge"]);
-  gTasks.setColumnIds('COMPLETED,SUMMARY,PROJECT,DUEDATE,SEEN,GPRIORITY')
-  gTasks.setColTypes("ch,edtxt,co,dhxCalendar,edtxt,edtxt");
-  gTasks.setColumnHidden(4,true);
-  gTasks.setColumnHidden(5,true);
-  //gTasks.enableEditEvents(false,true,true);
-  var cbProject = gTasks.getCombo(2);
+  gTimes = siTimes.attachGrid({parent:"pTimes"});
+  gTimes.setImagePath("codebase/imgs/");
+  //gTimes.enableAutoWidth(true);
+  //gTimes.enableAutoHeight(true);
+  gTimes.setSizes();
+  gTimes.setHeader(["Aufgabe","Projekt","Dauer"]);
+  gTimes.setColumnIds('TASK,PROJECT,DURATION')
+  gTimes.setColTypes("edtxt,co,edtxt");
+  //gTimes.enableEditEvents(false,true,true);
+  var cbProject = gTimes.getCombo(2);
   /*
   if (cbProject) {
     cbProject.attachEvent("onOpen", function(){
@@ -75,17 +61,16 @@ dhtmlxEvent(window,"load",function(){
     });
   }
   */
-  gTasks.setDateFormat("%d.%m.%Y");
-  gTasks.setColSorting('ch,str,str,date');
-  gTasks.enableValidation(false,false,true,false);
-  //gTasks.setColValidators(",NotEmpty,,");
-  gTasks.setColumnMinWidth('30' , 0);
-  gTasks.setInitWidths('50,*,*,70');
-  //gTasks.attachFooter(",,,#stat_max");
-  gTasks.init();
+  gTimes.setDateFormat("%d.%m.%Y");
+  gTimes.setColSorting('str,str,str');
+  gTimes.init();
+  var eDate = tbToolbar.getInput("datea")
+  var cDate = new dhtmlXCalendarObject([eDate]);
+  cDate.setDateFormat("%d.%m.%Y");
+  tbToolbar.setValue("datea","02.07.2012");
 
-  dsTasks = newPrometDataStore('tasks');
-  dsTasks.DataProcessor.init(gTasks);
+  dsTimes = newPrometDataStore('times');
+  dsTimes.DataProcessor.init(gTimes);
 
-  //RefreshTasks();
+  //RefreshTimes();
 });
