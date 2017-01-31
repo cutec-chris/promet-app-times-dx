@@ -10,7 +10,7 @@ function AddEntry() {
   //dsTimes.add({id:aId})
   //gTimes.sync(dsTimes);
   gTimes.addRow(aId,"");
-  gTimes.selectCell(gTimes.getRowIndex(aId),1);
+  gTimes.selectCell(gTimes.getRowIndex(aId),0);
   window.setTimeout(function(){
     gTimes.editCell();
     gTimes.enableKeyboardSupport(true);
@@ -21,14 +21,16 @@ var siTimes,tbToolbar,gTimes,dsTimes;
 
 dhtmlxEvent(window,"load",function(){
   console.log("Loading Times Page...");
-  sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: ''});
+  sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: 'fa fa-refresh'});
   siTimes = window.parent.sbMain.cells('siTimes');
   tbToolbar = siTimes.attachToolbar({
     parent:"pToolbar",
       items:[
          {id: "new", type: "button", text: "Neu", img: "fa fa-plus-circle"}
         ,{id: "sep1", type: "separator" }
+        ,{id: "datep", type: "button", img: "fa fa-chevron-left"}
         ,{id: "datea", type: "buttonInput"}
+        ,{id: "daten", type: "button", img: "fa fa-chevron-right"}
         ,{id: "sep1", type: "separator" }
         ,{id: "refresh", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
       ],
@@ -36,7 +38,7 @@ dhtmlxEvent(window,"load",function(){
   });
   tbToolbar.attachEvent("onClick", function(id) {
     if (id=='new') {
-      AddTask();
+      AddEntry();
     } else if (id=='refresh') {
       RefreshTimes();
     }
@@ -46,9 +48,9 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Aufgabe","Projekt","Dauer"]);
-  gTimes.setColumnIds('TASK,PROJECT,DURATION')
-  gTimes.setColTypes("edtxt,co,edtxt");
+  gTimes.setHeader(["Aufgabe","Projekt","Dauer (h)","Notiz"]);
+  gTimes.setColumnIds('TASK,PROJECT,DURATION,NOTE')
+  gTimes.setColTypes("edtxt,co,edtxt,edtxt");
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(2);
   /*
@@ -61,8 +63,10 @@ dhtmlxEvent(window,"load",function(){
     });
   }
   */
+
   gTimes.setDateFormat("%d.%m.%Y");
-  gTimes.setColSorting('str,str,str');
+  gTimes.setColSorting('str,str,str,str');
+  gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,",["text-align:left;"]);
   gTimes.init();
   var eDate = tbToolbar.getInput("datea")
   var cDate = new dhtmlXCalendarObject([eDate]);
