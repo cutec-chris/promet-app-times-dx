@@ -1,7 +1,11 @@
 function RefreshTimes() {
   siTimes.progressOn();
   console.log("Refresh Times");
-  dsTimes.FillGrid(gTimes);
+  var aDate = new Date();
+  aDate = parseDate(tbToolbar.getValue("datea"));
+  var bDate = new Date();
+  bDate.setDate(aDate.getDate() - 1);
+  dsTimes.FillGrid(gTimes,'\"START\">\''+formatDate(bDate,'YYYYMMdd')+'\' AND \"END\"<\''+formatDate(aDate,'YYYYMMdd')+'\'');
   siTimes.progressOff();
 }
 function AddEntry() {
@@ -41,16 +45,32 @@ dhtmlxEvent(window,"load",function(){
       AddEntry();
     } else if (id=='refresh') {
       RefreshTimes();
+    } else if (id=='datep') {
+      var aDate = new Date();
+      aDate = parseDate(tbToolbar.getValue("datea"));
+      aDate.setDate(aDate.getDate() - 1);
+      tbToolbar.setValue("datea",formatDate(aDate,'dd.MM.YYYY'));
+      RefreshTimes();
+    } else if (id=='daten') {
+      var aDate = new Date();
+      aDate = parseDate(tbToolbar.getValue("datea"));
+      aDate.setDate(aDate.getDate() + 1);
+      tbToolbar.setValue("datea",formatDate(aDate,'dd.MM.YYYY'));
+      RefreshTimes();
     }
-		});
+  });
+  dhtmlxValidation.isValidTime=function(data){
+    return true;
+  };
   gTimes = siTimes.attachGrid({parent:"pTimes"});
   gTimes.setImagePath("codebase/imgs/");
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
   gTimes.setHeader(["Aufgabe","Projekt","Dauer (h)","Notiz"]);
-  gTimes.setColumnIds('TASK,PROJECT,DURATION,NOTE')
-  gTimes.setColTypes("edtxt,co,edtxt,edtxt");
+  gTimes.setColumnIds('JOB,PROJECT,DURATION,NOTE')
+  gTimes.setColTypes("edtxt,co,edtxt,txt");
+  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,");
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(2);
   /*
@@ -68,10 +88,14 @@ dhtmlxEvent(window,"load",function(){
   gTimes.setColSorting('str,str,str,str');
   gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,",["text-align:left;"]);
   gTimes.init();
-  var eDate = tbToolbar.getInput("datea")
+  var eDate = tbToolbar.getInput("datea");
   var cDate = new dhtmlXCalendarObject([eDate]);
   cDate.setDateFormat("%d.%m.%Y");
-  tbToolbar.setValue("datea","02.07.2012");
+  var aDate = new Date();
+  tbToolbar.setValue("datea",formatDate(aDate,'dd.MM.YYYY'));
+  eDate.attachEvent("onChange", function(date, state){
+    RefreshTimes();
+  });
 
   dsTimes = newPrometDataStore('times');
   dsTimes.DataProcessor.init(gTimes);
