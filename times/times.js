@@ -3,9 +3,9 @@ function RefreshTimes() {
   console.log("Refresh Times");
   var aDate = new Date();
   aDate = parseDate(tbToolbar.getValue("datea"));
-  var bDate = new Date();
-  bDate.setDate(aDate.getDate() - 1);
-  dsTimes.FillGrid(gTimes,'\"START\">\''+formatDate(bDate,'YYYYMMdd')+'\' AND \"END\"<\''+formatDate(aDate,'YYYYMMdd')+'\'');
+  var bDate = new Date(aDate.getTime());
+  bDate.setDate(bDate.getDate() + 1);
+  dsTimes.FillGrid(gTimes,'\"START\">\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'');
   siTimes.progressOff();
 }
 function AddEntry() {
@@ -93,10 +93,9 @@ dhtmlxEvent(window,"load",function(){
   cDate.setDateFormat("%d.%m.%Y");
   var aDate = new Date();
   tbToolbar.setValue("datea",formatDate(aDate,'dd.MM.YYYY'));
-  eDate.attachEvent("onChange", function(date, state){
+  cDate.attachEvent("onChange", function(date, state){
     RefreshTimes();
   });
-
   dsTimes = newPrometDataStore('times');
   dsTimes.DataProcessor.init(gTimes);
 
