@@ -22,7 +22,6 @@ function AddEntry() {
   },1);
 }
 var siTimes,tbToolbar,gTimes,dsTimes;
-
 dhtmlxEvent(window,"load",function(){
   console.log("Loading Times Page...");
   sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: 'fa fa-refresh'});
@@ -62,6 +61,7 @@ dhtmlxEvent(window,"load",function(){
   dhtmlxValidation.isValidTime=function(data){
     return true;
   };
+
   gTimes = siTimes.attachGrid({parent:"pTimes"});
   gTimes.setImagePath("codebase/imgs/");
   //gTimes.enableAutoWidth(true);
@@ -84,8 +84,8 @@ dhtmlxEvent(window,"load",function(){
   }
   */
 
-  gTimes.setDateFormat("%d.%m.%Y");
-  gTimes.setColSorting('str,str,str,str');
+  //gTimes.setDateFormat("%d.%m.%Y");
+  //gTimes.setColSorting('str,str,str,str');
   gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,",["text-align:left;"]);
   gTimes.init();
   var eDate = tbToolbar.getInput("datea");
@@ -98,6 +98,28 @@ dhtmlxEvent(window,"load",function(){
   });
   dsTimes = newPrometDataStore('times');
   dsTimes.DataProcessor.init(gTimes);
-
+  dsTimes.onSetValue = function(aField,aValue) {
+    if (aField=='PROJECT') {
+      return aValue;
+    } if (aField=='DURATION') {
+      return aValue/8;
+    } else {
+      return aValue;
+    }
+  }
+  dsTimes.onGetValue = function(aField,aValue) {
+    if (aField=='PROJECT') {
+      if (aValue.indexOf('{')>-1)
+        return aValue.substring(aValue.indexOf('{')+1,aValue.indexOf('}'))
+      else return aValue;
+    } if (aField=='DURATION') {
+      var tmp = parseFloat(aValue.replace(',','.'))*8;
+      if (tmp > 1)
+        return tmp.toPrecision(2)+' h'
+      else return Math.round(tmp*60)+' min';
+    } else {
+      return aValue;
+    }
+  }
   //RefreshTimes();
 });
