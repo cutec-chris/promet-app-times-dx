@@ -67,12 +67,12 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Aufgabe","Projekt","Dauer (h)","Notiz"]);
-  gTimes.setColumnIds('JOB,PROJECT,DURATION,NOTE')
-  gTimes.setColTypes("edtxt,co,edtxt,txt");
-  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,");
+  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz"]);
+  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE')
+  gTimes.setColTypes("co,edtxt,edtxt,txt");
+  gTimes.setColValidators("NotEmpty,,ValidTime,");
   //gTimes.enableEditEvents(false,true,true);
-  var cbProject = gTimes.getCombo(2);
+  var cbProject = gTimes.getCombo(1);
   /*
   if (cbProject) {
     cbProject.attachEvent("onOpen", function(){
