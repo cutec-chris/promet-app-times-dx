@@ -5,15 +5,19 @@ function RefreshTimes() {
   aDate = parseDate(tbToolbar.getValue("datea"));
   var bDate = new Date(aDate.getTime());
   bDate.setDate(bDate.getDate() + 1);
-  dsTimes.FillGrid(gTimes,'\"START\">\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'');
-  siTimes.progressOff();
+  dsTimes.FillGrid(gTimes,'\"START\">=\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'',0,function (){
+    siTimes.progressOff();
+  }
+  );
 }
 function AddEntry() {
   console.log("New Entry");
   var aId = gTimes.uid();
   //dsTimes.add({id:aId})
   //gTimes.sync(dsTimes);
-  gTimes.addRow(aId,"");
+  var aDate = new Date();
+  aDate = parseDate(tbToolbar.getValue("datea")+formatDate(aDate,'HH:mm'));
+  gTimes.addRow(aId,",,,,"+formatDate(aDate,'dd.MM.YYYY HH:mm'));
   gTimes.selectCell(gTimes.getRowIndex(aId),0);
   window.setTimeout(function(){
     gTimes.editCell();
@@ -67,10 +71,12 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz"]);
-  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE')
-  gTimes.setColTypes("co,edtxt,edtxt,txt");
-  gTimes.setColValidators("NotEmpty,,ValidTime,");
+  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
+  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
+  gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
+  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty");
+  gTimes.setColumnHidden(4,true);
+  gTimes.setInitWidths('*,*,*,*,0');
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(1);
   /*
@@ -86,7 +92,7 @@ dhtmlxEvent(window,"load",function(){
 
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
-  gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,",["text-align:left;"]);
+  gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,,",["text-align:left;"]);
   gTimes.init();
   var eDate = tbToolbar.getInput("datea");
   var cDate = new dhtmlXCalendarObject([eDate]);
