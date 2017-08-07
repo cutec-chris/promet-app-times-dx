@@ -1,14 +1,17 @@
 function RefreshTimes() {
-  siTimes.progressOn();
   console.log("Refresh Times");
   var aDate = new Date();
   aDate = parseDate(tbToolbar.getValue("datea"));
   var bDate = new Date(aDate.getTime());
   bDate.setDate(bDate.getDate() + 1);
-  dsTimes.FillGrid(gTimes,'\"START\">=\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'',0,function (){
+  try {
+    siTimes.progressOn();
+    dsTimes.FillGrid(gTimes,'\"START\">=\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'',0,function (){
+      siTimes.progressOff();
+    });
+  } catch(err) {
     siTimes.progressOff();
   }
-  );
 }
 function AddEntry() {
   console.log("New Entry");
@@ -40,6 +43,7 @@ dhtmlxEvent(window,"load",function(){
         ,{id: "daten", type: "button", img: "fa fa-chevron-right"}
         ,{id: "sep1", type: "separator" }
         ,{id: "refresh", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
+        ,{id: "menu", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
       ],
     iconset: "awesome"
   });
