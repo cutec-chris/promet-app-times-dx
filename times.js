@@ -1,15 +1,17 @@
+var siTimes,tbToolbar,gTimes,dsTimes;
 function RefreshTimes() {
   console.log("Refresh Times");
-  var aDate = new Date();
-  aDate = parseDate(tbToolbar.getValue("datea"));
-  var bDate = new Date(aDate.getTime());
-  bDate.setDate(bDate.getDate() + 1);
   try {
+    var aDate = new Date();
+    aDate = parseDate(tbToolbar.getValue("datea"));
+    var bDate = new Date(aDate.getTime());
+    bDate.setDate(bDate.getDate() + 1);
     siTimes.progressOn();
     dsTimes.FillGrid(gTimes,'\"START\">=\''+formatDate(aDate,'YYYYMMdd')+'\' AND \"START\"<\''+formatDate(bDate,'YYYYMMdd')+'\'',0,function (){
       siTimes.progressOff();
     });
   } catch(err) {
+    console.log('Refresh Exception:'+err.message);
     siTimes.progressOff();
   }
 }
@@ -28,7 +30,6 @@ function AddEntry() {
     gTimes.setActive();
   },1);
 }
-var siTimes,tbToolbar,gTimes,dsTimes;
 dhtmlxEvent(window,"load",function(){
   console.log("Loading Times Page...");
   sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: 'fa fa-refresh'});
@@ -43,7 +44,7 @@ dhtmlxEvent(window,"load",function(){
         ,{id: "daten", type: "button", img: "fa fa-chevron-right"}
         ,{id: "sep1", type: "separator" }
         ,{id: "refresh", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
-        ,{id: "menu", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
+        ,{id: "menu", type: "button", text: "", img: "fa fa-bars"}
       ],
     iconset: "awesome"
   });
