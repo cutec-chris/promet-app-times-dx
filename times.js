@@ -84,16 +84,15 @@ dhtmlxEvent(window,"load",function(){
   gTimes.setInitWidths('*,*,*,*,*');
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(0);
-  /*
   if (cbProject) {
-    cbProject.attachEvent("onOpen", function(){
-      //TODO:fill with first Project Items
-    });
-    cbProject.attachEvent("onChange", function(value, text){
-      //TODO:fill with Project Items based on text
+    cbProject.enableFilteringMode(true,"dummy");
+    cbProject.attachEvent("onDynXLS", function (text){ // where 'text' is the text typed by the user into Combo
+      cbProject.clearAll();
+      dhtmlxAjax.get("data.php?mask="+text, function(xml){
+        //TODO:add new Items
+      })
     });
   }
-  */
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
   gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,,",["text-align:left;"]);
