@@ -81,10 +81,9 @@ dhtmlxEvent(window,"load",function(){
   gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
   gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty");
   gTimes.setColumnHidden(4,true);
-  gTimes.setInitWidths('*,*,*,*,0');
+  gTimes.setInitWidths('*,*,*,*,*');
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(1);
-  /*
   if (cbProject) {
     cbProject.attachEvent("onOpen", function(){
       //TODO:fill with first Project Items
@@ -93,7 +92,6 @@ dhtmlxEvent(window,"load",function(){
       //TODO:fill with Project Items based on text
     });
   }
-  */
 
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
