@@ -85,10 +85,10 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(0);
   if (cbProject) {
-    cbProject.enableFilteringMode(true,"dummy");
-    cbProject.attachEvent("onDynXLS", function (text){ // where 'text' is the text typed by the user into Combo
-      cbProject.clearAll();
-      dhtmlxAjax.get("data.php?mask="+text, function(xml){
+    //cbProject.enableFilteringMode(true,"dummy");
+    //cbProject.attachEvent("onDynXLS", function (text){ // where 'text' is the text typed by the user into Combo
+    //  cbProject.clearAll();
+    //  dhtmlxAjax.get("data.php?mask="+text, function(xml){
         //TODO:add new Items
       })
     });
