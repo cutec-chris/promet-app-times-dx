@@ -130,5 +130,9 @@ dhtmlxEvent(window,"load",function(){
       return aValue;
     }
   }
-  //RefreshTimes();
+  window.parent.sbMain.attachEvent("onSelect", function(id, lastId){
+    if (id == 'siTimes') {
+      RefreshTimes();
+    }
+  });
 });
