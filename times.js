@@ -90,8 +90,8 @@ dhtmlxEvent(window,"load",function(){
     //  cbProject.clearAll();
     //  dhtmlxAjax.get("data.php?mask="+text, function(xml){
         //TODO:add new Items
-      })
-    });
+  //    })
+//    });
   }
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
