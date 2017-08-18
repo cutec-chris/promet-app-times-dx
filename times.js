@@ -76,12 +76,14 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
-  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
-  gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
-  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty");
+  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start","N"]);
+  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START,END')
+  gTimes.setColTypes("co,edtxt,edtxt,txt,txt,txt");
+  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty,");
   gTimes.setColumnHidden(4,true);
-  gTimes.setInitWidths('*,*,*,*,*');
+  gTimes.setColumnHidden(5,true);
+  gTimes.setInitWidths('*,*,70,*,*');
+  gTimes.enableValidation(true);
   //gTimes.enableEditEvents(false,true,true);
   var cbProject = gTimes.getCombo(0);
   if (cbProject) {
@@ -95,7 +97,7 @@ dhtmlxEvent(window,"load",function(){
   }
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
-  gTimes.attachFooter("Gesamtzeit,#cspan,<div id='sr_q'>0</div>,,",["text-align:left;"]);
+  gTimes.attachFooter("Gesamtzeit,#cspan,#stat_sum,,",["text-align:left;"]);
   gTimes.init();
   var eDate = tbToolbar.getInput("datea");
   var cDate = new dhtmlXCalendarObject([eDate]);
