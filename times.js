@@ -21,8 +21,10 @@ function AddEntry() {
   //dsTimes.add({id:aId})
   //gTimes.sync(dsTimes);
   var aDate = new Date();
-  aDate = parseDate(tbToolbar.getValue("datea")+formatDate(aDate,'HH:mm'));
-  gTimes.addRow(aId,",,,,"+formatDate(aDate,'dd.MM.YYYY HH:mm'));
+  aDate = parseDate(tbToolbar.getValue("datea")+' '+formatDate(aDate,'HH:mm'));
+  gTimes.addRow(aId,',,,,,');
+  aDate.setMinutes(gTimes.getRowsNum())
+  gTimes.cells(aId,4).setValue(formatDate(aDate,'dd.MM.YYYY HH:mm'));
   gTimes.selectCell(gTimes.getRowIndex(aId),0);
   window.setTimeout(function(){
     gTimes.editCell();
@@ -76,12 +78,11 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start","N"]);
-  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START,END')
-  gTimes.setColTypes("co,edtxt,edtxt,txt,txt,txt");
-  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty,");
+  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
+  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
+  gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
+  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty");
   gTimes.setColumnHidden(4,true);
-  gTimes.setColumnHidden(5,true);
   gTimes.setInitWidths('*,*,70,*,*');
   gTimes.enableValidation(true);
   //gTimes.enableEditEvents(false,true,true);
