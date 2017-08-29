@@ -45,7 +45,7 @@ dhtmlxEvent(window,"load",function(){
         ,{id: "datea", type: "buttonInput"}
         ,{id: "daten", type: "button", img: "fa fa-chevron-right"}
         ,{id: "sep1", type: "separator" }
-        ,{id: "refresh", type: "button", text: "Aktualisieren", img: "fa fa-refresh"}
+        ,{id: "refresh", type: "button", text: "", img: "fa fa-refresh"}
         ,{id: "menu", type: "button", text: "", img: "fa fa-bars"}
       ],
     iconset: "awesome"
