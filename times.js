@@ -81,7 +81,7 @@ dhtmlxEvent(window,"load",function(){
   gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
   gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
   gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
-  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,,NotEmpty");
+  gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
   gTimes.setColumnHidden(4,true);
   gTimes.setInitWidths('*,*,70,*,*');
   gTimes.enableValidation(true);
@@ -114,7 +114,17 @@ dhtmlxEvent(window,"load",function(){
     if (aField=='PROJECT') {
       return aValue;
     } if (aField=='DURATION') {
-      return aValue/8;
+      var tmp = aValue.substring(aValue.indexOf(' ')+1,aValue.length);
+      switch (tmp) {
+      case 'min':{
+        var tmp2 = aValue.substring(0,aValue.indexOf(' '));
+        tmp2 = tmp2/60/8;
+        return tmp2.toPrecision(2).replace('.',',');
+      }
+      default:{
+        return aValue/8;
+      }
+    }
     } else {
       return aValue;
     }
