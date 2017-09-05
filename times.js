@@ -1,4 +1,4 @@
-var siTimes,tbToolbar,gTimes,dsTimes;
+var siTimes,tbToolbar,gTimes,dsTimes,ppTimes,ppTimesGrid;
 function RefreshTimes() {
   console.log("Refresh Times");
   try {
@@ -80,22 +80,42 @@ dhtmlxEvent(window,"load",function(){
   gTimes.setSizes();
   gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
   gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
-  gTimes.setColTypes("co,edtxt,edtxt,txt,txt");
+  gTimes.setColTypes("edtxt,edtxt,edtxt,txt,txt");
   gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
   gTimes.setColumnHidden(4,true);
   gTimes.setInitWidths('*,*,70,*,*');
   gTimes.enableValidation(true);
   //gTimes.enableEditEvents(false,true,true);
-  var cbProject = gTimes.getCombo(0);
-  if (cbProject) {
-    //cbProject.enableFilteringMode(true,"dummy");
-    //cbProject.attachEvent("onDynXLS", function (text){ // where 'text' is the text typed by the user into Combo
-    //  cbProject.clearAll();
-    //  dhtmlxAjax.get("data.php?mask="+text, function(xml){
-        //TODO:add new Items
-  //    })
-//    });
-  }
+
+  ppTimes = new dhtmlXPopup();
+  var ppTimeseId = ppTimes.attachEvent("onShow",function(){
+ 		 ppTimesGrid = ppTimes.attachGrid(300,200);
+  				ppTimesGrid.setImagePath("../../../codebase/imgs/")
+  				ppTimesGrid.load("../common/grid2.xml", function(){
+  					ppTimesGrid.filterBy(1, myForm.getItemValue("country"));
+  					ppTimesGrid.selectRow(0);
+  					ppTimesGrid._loaded = true;
+  				});
+  				ppTimesGrid.attachEvent("onRowDblClicked", function(id){
+  					myForm.setItemValue("country", ppTimesGrid.cells(id,1).getValue());
+  					myPop.hide();
+  					ppTimesGrid.clearSelection();
+  				});
+  				ppTimes.detachEvent(ppTimeseId);
+	});
+  gTimes.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
+    if (stage == 2) //validation
+      return true;
+    else if ((cInd==0)&&(nValue!="")) {
+      var cell = gTimes.cells(rId, cInd).cell;
+    	var rect = cell.getBoundingClientRect();
+      if (!ppTimes.isVisible()) ppTimes.show(rect.left, rect.top,rect.width,rect.height);
+      if (ppTimesGrid._loaded) {
+        ppTimesGrid.filterBy(1,value);
+        selectRowIfNotSelected();
+      }
+    }
+  });
   //gTimes.setDateFormat("%d.%m.%Y");
   //gTimes.setColSorting('str,str,str,str');
   gTimes.attachFooter("Gesamtzeit,#cspan,#stat_sum,,",["text-align:left;"]);
