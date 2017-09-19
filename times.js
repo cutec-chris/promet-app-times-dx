@@ -87,33 +87,27 @@ dhtmlxEvent(window,"load",function(){
   gTimes.enableValidation(true);
   //gTimes.enableEditEvents(false,true,true);
 
-  ppTimes = new dhtmlXPopup();
-  var ppTimeseId = ppTimes.attachEvent("onShow",function(){
- 		 ppTimesGrid = ppTimes.attachGrid(300,200);
-  				ppTimesGrid.setImagePath("../../../codebase/imgs/")
-  				ppTimesGrid.load("../common/grid2.xml", function(){
-  					ppTimesGrid.filterBy(1, myForm.getItemValue("country"));
-  					ppTimesGrid.selectRow(0);
-  					ppTimesGrid._loaded = true;
-  				});
-  				ppTimesGrid.attachEvent("onRowDblClicked", function(id){
-  					myForm.setItemValue("country", ppTimesGrid.cells(id,1).getValue());
-  					myPop.hide();
-  					ppTimesGrid.clearSelection();
-  				});
-  				ppTimes.detachEvent(ppTimeseId);
-	});
+  ppTimes = newPrometAutoComplete(null,
+	                              'projects','ID',["Projekt","Nummer"],
+																'NAME,ID',function(id){
+                                  //myForm.setItemValue("country", ppTimes.Grid.cells(id,1).getValue());
+                        					ppTimes.Popup.hide();
+                        					ppTimes.Grid.clearSelection();
+											  				});
+
   gTimes.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
     if (stage == 2) //validation
       return true;
     else if ((cInd==0)&&(nValue!="")) {
       var cell = gTimes.cells(rId, cInd).cell;
     	var rect = cell.getBoundingClientRect();
-      if (!ppTimes.isVisible()) ppTimes.show(rect.left, rect.top,rect.width,rect.height);
-      if (ppTimesGrid._loaded) {
-        ppTimesGrid.filterBy(1,value);
-        selectRowIfNotSelected();
-      }
+      if (!ppTimes.Popup.isVisible()) ppTimes.Popup.show(rect.left, rect.top,rect.width,rect.height);
+    }
+  });
+  gTimes.attachEvent("onKeyPress", function(code,cFlag,sFlag){
+    if ((ppTimes.Grid._loaded)&&(ppTimes.Popup.isVisible())) {
+      var tmp = gTimes.cells(gTimes.getSelectedRowId(), gTimes.getSelectedCellIndex());
+      ppTimes.Grid.filterBy(0,tmp.getValue());
     }
   });
   //gTimes.setDateFormat("%d.%m.%Y");
