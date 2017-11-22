@@ -78,23 +78,25 @@ dhtmlxEvent(window,"load",function(){
   //gTimes.enableAutoWidth(true);
   //gTimes.enableAutoHeight(true);
   gTimes.setSizes();
-  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start"]);
-  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START')
-  gTimes.setColTypes("edtxt,edtxt,edtxt,txt,txt");
+  gTimes.setHeader(["Projekt","Aufgabe","Dauer (h)","Notiz","Start","Project ID"]);
+  gTimes.setColumnIds('PROJECT,JOB,DURATION,NOTE,START,PROJECTID')
+  gTimes.setColTypes("edtxt,edtxt,edtxt,txt,txt,txt");
   gTimes.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
   gTimes.setColumnHidden(4,true);
+  gTimes.setColumnHidden(5,true);
   gTimes.setInitWidths('*,*,70,*,*');
   gTimes.enableValidation(true);
   //gTimes.enableEditEvents(false,true,true);
 
   ppTimes = newPrometAutoComplete(null,
-	                              'projects','ID',["Projekt","Nummer"],
-																'NAME,ID',function(id){
-                                  //myForm.setItemValue("country", ppTimes.Grid.cells(id,1).getValue());
+	                              'projects','ID',["Projekt","Nummer","ID"],
+																'NAME,ID,id',function(id){
+                                  gTimes.cells(gTimes.getSelectedRowId(),0).setValue(ppTimes.Grid.cells(id,0).getValue());
+                                  gTimes.cells(gTimes.getSelectedRowId(),5).setValue(ppTimes.Grid.cells(id,2).getValue());
                         					ppTimes.Popup.hide();
                         					ppTimes.Grid.clearSelection();
 											  				});
-
+  ppTimes.Grid.setColumnHidden(2,true);
   gTimes.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
     if (stage == 2) //validation
       return true;
