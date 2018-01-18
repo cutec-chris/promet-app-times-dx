@@ -32,7 +32,7 @@ function AddEntry() {
     gTimes.setActive();
   },1);
 }
-dhtmlxEvent(window,"load",function(){
+window.addEventListener('AfterLogin',function(){
   console.log("Loading Times Page...");
   sbMain.addItem({id: 'siTimes', text: 'Zeitaufschreibung', icon: 'fa fa-refresh'});
   siTimes = window.parent.sbMain.cells('siTimes');
