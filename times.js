@@ -165,3 +165,7 @@ window.addEventListener('AfterLogin',function(){
     }
   });
 });
+window.addEventListener('AfterLogout',function(){
+  gTimes.destructor();
+  siTimes.remove();
+});
