@@ -1,6 +1,6 @@
 var siTimes,tbToolbar,gTimes,dsTimes,ppTimes,ppTimesGrid;
 function RefreshTimes() {
-  console.log("Refresh Times");
+  //console.log("Refresh Times");
   try {
     var aDate = new Date();
     aDate = parseDate(tbToolbar.getValue("datea"));
