@@ -24,7 +24,7 @@ function AddEntry() {
   aDate = parseDate(tbToolbar.getValue("datea")+' '+formatDate(aDate,'HH:mm'));
   gTimes.addRow(aId,',,,,,');
   aDate.setMinutes(gTimes.getRowsNum())
-  gTimes.cells(aId,4).setValue(formatDate(aDate,'dd.MM.YYYY HH:mm'));
+  gTimes.cells(aId,4).setValue(aDate.toString("r"));
   gTimes.selectCell(gTimes.getRowIndex(aId),0);
   window.setTimeout(function(){
     gTimes.editCell();
