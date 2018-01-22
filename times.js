@@ -90,7 +90,9 @@ window.addEventListener('AfterLogin',function(){
 
   ppTimes = newPrometAutoComplete(null,
 	                              'projects','ID',["Projekt","Nummer","ID"],
-																'NAME,ID,id',function(id){
+																'NAME,ID,id',
+                                'lower("NAME") like lower(\'%FILTERVALUE%\')',
+                                function(id){
                                   gTimes.cells(gTimes.getSelectedRowId(),0).setValue(ppTimes.Grid.cells(id,0).getValue());
                                   gTimes.cells(gTimes.getSelectedRowId(),5).setValue(ppTimes.Grid.cells(id,2).getValue());
                         					ppTimes.Popup.hide();
@@ -98,7 +100,7 @@ window.addEventListener('AfterLogin',function(){
 											  				});
   ppTimes.Grid.setColumnHidden(2,true);
   gTimes.attachEvent("onEditCell", function(stage,rId,cInd,nValue,oValue){
-    if (stage == 2) //validation
+    if ((stage == 2)&&!ppTimes.Popup.isVisible()) //validation
       return true;
     else if ((cInd==0)&&(nValue!="")) {
       var cell = gTimes.cells(rId, cInd).cell;
@@ -107,9 +109,9 @@ window.addEventListener('AfterLogin',function(){
     }
   });
   gTimes.attachEvent("onKeyPress", function(code,cFlag,sFlag){
-    if ((ppTimes.Grid._loaded)&&(ppTimes.Popup.isVisible())) {
+    if ((ppTimes.Popup.isVisible())) {
       var tmp = gTimes.cells(gTimes.getSelectedRowId(), gTimes.getSelectedCellIndex());
-      ppTimes.Grid.filterBy(0,tmp.getValue());
+      ppTimes.DoFilter(tmp.getValue());
     }
   });
   //gTimes.setDateFormat("%d.%m.%Y");
