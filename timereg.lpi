@@ -102,7 +102,6 @@
       <Unit0>
         <Filename Value="timereg.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="statistics"/>
       </Unit0>
     </Units>
   </ProjectOptions>
