@@ -10,7 +10,7 @@ type
     procedure ToolbarButtonClick(id : string);
     procedure Refresh;
   public
-    constructor Create(aParent: TJSElement; aDataSet: string);override;
+    constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
   end;
 
 resourcestring
@@ -71,7 +71,8 @@ begin
 
 end;
 
-constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string);
+constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
+  aPattern: string);
 begin
   inherited Create(aParent, aDataSet);
   with Toolbar do

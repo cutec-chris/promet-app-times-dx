@@ -32,8 +32,8 @@
     };
     this.Refresh = function () {
     };
-    this.Create$1 = function (aParent, aDataSet) {
-      pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet);
+    this.Create$1 = function (aParent, aDataSet, aPattern) {
+      pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet,"1C");
       var $with1 = this.Toolbar;
       $with1.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle","fa fa-plus-circle");
       $with1.addSeparator("sep1",1);
@@ -49,7 +49,7 @@
     var aParent = null;
     if (!($mod.List != null)) {
       aParent = rtl.getObject(pas.Avamm.GetAvammContainer());
-      $mod.List = $mod.TTimeregForm.$create("Create$1",[aParent,"times"]);
+      $mod.List = $mod.TTimeregForm.$create("Create$1",[aParent,"times","1C"]);
     };
     $mod.List.Show();
   };
