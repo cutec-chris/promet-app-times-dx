@@ -1,4 +1,4 @@
-﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils"],function () {
+﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
@@ -7,7 +7,7 @@
       var aDate = 0.0;
       aDate = pas.SysUtils.Now();
       if (id === "refresh") {
-        this.Refresh();
+        this.RefreshList();
       } else if (id === "daten") {
         tmp = "" + this.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
@@ -17,7 +17,7 @@
           }});
         aDate = aDate + 1;
         this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
-        this.Refresh();
+        this.RefreshList();
       } else if (id === "datep") {
         tmp = "" + this.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
@@ -27,10 +27,8 @@
           }});
         aDate = aDate - 1;
         this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
-        this.Refresh();
+        this.RefreshList();
       } else if (id === "new") ;
-    };
-    this.Refresh = function () {
     };
     this.Create$1 = function (aParent, aDataSet, aPattern) {
       pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet,"1C");
@@ -42,6 +40,25 @@
       $with1.addButton("daten",4,"","fa fa-chevron-right","fa fa-chevron-right");
       $with1.addSeparator("sep2",1);
       $with1.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
+    };
+    this.RefreshList = function () {
+      var Self = this;
+      function SwitchProgressOff(DataSet, Data) {
+        Self.Page.progressOff();
+      };
+      var aDate = 0.0;
+      try {
+        Self.Page.progressOn();
+        aDate = pas.SysUtils.StrToDate("" + Self.Toolbar.getValue("datea"));
+        Self.FDataSet.SetFilter(((('"START">=' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + ' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + "'");
+        Self.FDataSet.Load({},SwitchProgressOff);
+      } catch ($e) {
+        if (pas.SysUtils.Exception.isPrototypeOf($e)) {
+          var e = $e;
+          pas.System.Writeln("Refresh Exception:" + e.fMessage);
+          Self.Page.progressOff();
+        } else throw $e
+      };
     };
   });
   this.List = null;

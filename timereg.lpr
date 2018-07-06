@@ -1,5 +1,5 @@
 library timereg;
-  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils;
+  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db;
 
 type
 
@@ -8,9 +8,9 @@ type
   TTimeregForm = class(TAvammListForm)
   protected
     procedure ToolbarButtonClick(id : string);
-    procedure Refresh;
   public
     constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
+    procedure RefreshList; override;
   end;
 
 resourcestring
@@ -42,7 +42,7 @@ begin
   aDate := now();
   if (id='refresh') then
     begin
-      Refresh;
+      RefreshList;
     end
   else if (id='daten') then
     begin
@@ -50,7 +50,7 @@ begin
       TryStrToDate(tmp,aDate);
       aDate := aDate + 1;
       Toolbar.setValue('datea', DateToStr(aDate));
-      Refresh;
+      RefreshList;
     end
   else if (id='datep') then
     begin
@@ -58,17 +58,13 @@ begin
       TryStrToDate(tmp,aDate);
       aDate := aDate - 1;
       Toolbar.setValue('datea', DateToStr(aDate));
-      Refresh;
+      RefreshList;
     end
   else if (id='new') then
     begin
+
     end
   ;
-end;
-
-procedure TTimeregForm.Refresh;
-begin
-
 end;
 
 constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
@@ -85,6 +81,29 @@ begin
       addSeparator('sep2',1);
       attachEvent('onClick', @ToolbarButtonClick);
     end;
+end;
+
+procedure TTimeregForm.RefreshList;
+  procedure SwitchProgressOff(DataSet: TDataSet; Data: JSValue);
+  begin
+    Page.progressOff;
+  end;
+
+var
+  aDate: TDateTime;
+begin
+  try
+    Page.progressOn();
+    aDate := strToDate(string(Toolbar.getValue('datea')));
+    DataSet.ServerFilter:='"START">='+FormatDateTime('YYYYMMdd',aDate)+' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate)+'''';
+    DataSet.Load([],@SwitchProgressOff);
+  except
+    on e : Exception do
+      begin
+        writeln('Refresh Exception:'+e.message);
+        Page.progressOff();
+      end;
+  end;
 end;
 
 initialization
