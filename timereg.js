@@ -3,15 +3,30 @@
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
     this.ToolbarButtonClick = function (id) {
-      var aDate = null;
       var tmp = "";
-      if (id === "refresh") {}
-      else if (id === "datep") {}
-      else if (id === "daten") {
+      var aDate = 0.0;
+      aDate = pas.SysUtils.Now();
+      if (id === "refresh") {
+        this.Refresh();
+      } else if (id === "daten") {
         tmp = "" + this.Toolbar.getValue("datea");
-        aDate = new Date(Date.parse(tmp));
-        aDate.setDate(aDate.getDate() - 1);
-        this.Toolbar.setValue("datea",pas.SysUtils.FormatDateTime("dd.MM.YYYY",pas.SysUtils.JSDateToDateTime(aDate)));
+        pas.SysUtils.TryStrToDate(tmp,{get: function () {
+            return aDate;
+          }, set: function (v) {
+            aDate = v;
+          }});
+        aDate = aDate + 1;
+        this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
+        this.Refresh();
+      } else if (id === "datep") {
+        tmp = "" + this.Toolbar.getValue("datea");
+        pas.SysUtils.TryStrToDate(tmp,{get: function () {
+            return aDate;
+          }, set: function (v) {
+            aDate = v;
+          }});
+        aDate = aDate - 1;
+        this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
         this.Refresh();
       } else if (id === "new") ;
     };

@@ -36,21 +36,28 @@ end;
 
 procedure TTimeregForm.ToolbarButtonClick(id : string);
 var
-  aDate: TJSDate;
   tmp: String;
+  aDate: TDateTime;
 begin
+  aDate := now();
   if (id='refresh') then
     begin
-    end
-  else if (id='datep') then
-    begin
+      Refresh;
     end
   else if (id='daten') then
     begin
       tmp := string(Toolbar.getValue('datea'));
-      aDate := TJSDate.New(TJSDate.parse(tmp));
-      aDate.Date := aDate.Date - 1;
-      Toolbar.setValue('datea', FormatDateTime('dd.MM.YYYY',JSDateToDateTime(aDate)));
+      TryStrToDate(tmp,aDate);
+      aDate := aDate + 1;
+      Toolbar.setValue('datea', DateToStr(aDate));
+      Refresh;
+    end
+  else if (id='datep') then
+    begin
+      tmp := string(Toolbar.getValue('datea'));
+      TryStrToDate(tmp,aDate);
+      aDate := aDate - 1;
+      Toolbar.setValue('datea', DateToStr(aDate));
       Refresh;
     end
   else if (id='new') then
