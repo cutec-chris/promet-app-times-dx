@@ -32,14 +32,23 @@
     };
     this.Create$1 = function (aParent, aDataSet, aPattern) {
       pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet,"1C");
-      var $with1 = this.Toolbar;
-      $with1.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle","fa fa-plus-circle");
-      $with1.addSeparator("sep1",1);
-      $with1.addButton("datep",2,"","fa fa-chevron-left","fa fa-chevron-left");
-      $with1.addInput("datea",3,"",null);
-      $with1.addButton("daten",4,"","fa fa-chevron-right","fa fa-chevron-right");
-      $with1.addSeparator("sep2",1);
-      $with1.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
+      var $with1 = this.Grid;
+      $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID",",",Array.of({}));
+      $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE,START,PROJECTID");
+      $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
+      $with1.setColumnHidden(4,true);
+      $with1.setColumnHidden(5,true);
+      $with1.setInitWidths("*,*,70,*,*");
+      $with1.enableValidation();
+      $with1.init();
+      var $with2 = this.Toolbar;
+      $with2.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle","fa fa-plus-circle");
+      $with2.addSeparator("sep1",1);
+      $with2.addButton("datep",2,"","fa fa-chevron-left","fa fa-chevron-left");
+      $with2.addInput("datea",3,"",null);
+      $with2.addButton("daten",4,"","fa fa-chevron-right","fa fa-chevron-right");
+      $with2.addSeparator("sep2",1);
+      $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
     };
     this.RefreshList = function () {
       var Self = this;
@@ -50,7 +59,7 @@
       try {
         Self.Page.progressOn();
         aDate = pas.SysUtils.StrToDate("" + Self.Toolbar.getValue("datea"));
-        Self.FDataSet.SetFilter(((('"START">=' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + ' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + "'");
+        Self.FDataSet.SetFilter(((('"START">=\'' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + '\' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate + 1)) + "'");
         Self.FDataSet.Load({},SwitchProgressOff);
       } catch ($e) {
         if (pas.SysUtils.Exception.isPrototypeOf($e)) {
@@ -59,6 +68,11 @@
           Self.Page.progressOff();
         } else throw $e
       };
+    };
+    this.Show = function () {
+      this.DoShow();
+      this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(pas.SysUtils.Now()));
+      this.RefreshList();
     };
   });
   this.List = null;

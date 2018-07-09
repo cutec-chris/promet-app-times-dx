@@ -11,6 +11,7 @@ type
   public
     constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
     procedure RefreshList; override;
+    procedure Show; override;
   end;
 
 resourcestring
@@ -71,6 +72,17 @@ constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
   aPattern: string);
 begin
   inherited Create(aParent, aDataSet);
+  with Grid do
+    begin
+      setHeader('Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID',',',TJSArray._of([]));
+      setColumnIds('PROJECT,JOB,DURATION,NOTE,START,PROJECTID');
+      setColValidators('NotEmpty,NotEmpty,ValidTime,null,NotEmpty');
+      setColumnHidden(4,true);
+      setColumnHidden(5,true);
+      setInitWidths('*,*,70,*,*');
+      enableValidation;
+      init();
+    end;
   with Toolbar do
     begin
       addButton('new',0,strNew,'fa fa-plus-circle','fa fa-plus-circle');
@@ -95,7 +107,7 @@ begin
   try
     Page.progressOn();
     aDate := strToDate(string(Toolbar.getValue('datea')));
-    DataSet.ServerFilter:='"START">='+FormatDateTime('YYYYMMdd',aDate)+' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate)+'''';
+    DataSet.ServerFilter:='"START">='''+FormatDateTime('YYYYMMdd',aDate)+''' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate+1)+'''';
     DataSet.Load([],@SwitchProgressOff);
   except
     on e : Exception do
@@ -104,6 +116,13 @@ begin
         Page.progressOff();
       end;
   end;
+end;
+
+procedure TTimeregForm.Show;
+begin
+  DoShow;
+  Toolbar.setValue('datea', DateToStr(Now()));
+  RefreshList;
 end;
 
 initialization
