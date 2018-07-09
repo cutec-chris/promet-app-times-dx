@@ -53,6 +53,8 @@ end;
 
 procedure TTimeregForm.DataSetGetText(Sender: TField; var aText: string;
   DisplayText: Boolean);
+var
+  tmp: Double;
 begin
   aText := Sender.AsString;
   case Sender.FieldName of
@@ -63,7 +65,10 @@ begin
     end;
   'DURATION':
     begin
-
+      tmp := Sender.AsFloat*8;
+      if (tmp > 1) then
+        atext := FormatFloat('0.00',tmp)+' h'
+      else atext := IntToStr(round(tmp*60))+' min';
     end;
   end;
 end;

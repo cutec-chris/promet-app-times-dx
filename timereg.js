@@ -10,11 +10,17 @@
       $with1.FieldByName("DURATION").FOnSetText = rtl.createCallback(this,"DataSetSetText");
     };
     this.DataSetGetText = function (Sender, aText, DisplayText) {
+      var tmp = 0.0;
       aText.set(Sender.GetAsString());
       var $tmp1 = Sender.FFieldName;
       if ($tmp1 === "PROJECT") {
         if (pas.System.Pos("{",aText.get()) > 0) aText.set(pas.System.Copy(aText.get(),pas.System.Pos("{",aText.get()) + 1,(aText.get().length - pas.System.Pos("{",aText.get())) - 1));
-      } else if ($tmp1 === "DURATION") ;
+      } else if ($tmp1 === "DURATION") {
+        tmp = Sender.GetAsFloat() * 8;
+        if (tmp > 1) {
+          aText.set(pas.SysUtils.FormatFloat("0.00",tmp) + " h")}
+         else aText.set(pas.SysUtils.IntToStr(Math.round(tmp * 60)) + " min");
+      };
     };
     this.DataSetSetText = function (Sender, aText) {
     };
