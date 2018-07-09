@@ -1,4 +1,4 @@
-﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB"],function () {
+﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB","dhtmlx_calendar"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
@@ -14,7 +14,7 @@
       var $tmp1 = Sender.FFieldName;
       if ($tmp1 === "PROJECT") {
         if (pas.System.Pos("{",aText.get()) > 0) aText.set(pas.System.Copy(aText.get(),pas.System.Pos("{",aText.get()) + 1,(aText.get().length - pas.System.Pos("{",aText.get())) - 1));
-      };
+      } else if ($tmp1 === "DURATION") ;
     };
     this.DataSetSetText = function (Sender, aText) {
     };
@@ -47,6 +47,8 @@
       } else if (id === "new") ;
     };
     this.Create$1 = function (aParent, aDataSet, aPattern) {
+      var eDate = undefined;
+      var cDate = null;
       pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet,"1C");
       var $with1 = this.Grid;
       $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID",",",Array.of({}));
@@ -66,6 +68,10 @@
       $with2.addSeparator("sep2",1);
       $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
       this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
+      eDate = this.Toolbar.getInput("datea");
+      cDate = new dhtmlXCalendarObject(eDate);
+      cDate.setDateFormat(pas.dhtmlx_calendar.DateFormatToDHTMLX(pas.SysUtils.ShortDateFormat));
+      cDate.attachEvent("onChange",rtl.createCallback(this,"RefreshList"));
     };
     this.RefreshList = function () {
       var Self = this;
@@ -76,8 +82,8 @@
       try {
         Self.Page.progressOn();
         aDate = pas.SysUtils.StrToDate("" + Self.Toolbar.getValue("datea"));
-        Self.FDataSet.SetFilter(((('"START">=\'' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + '\' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate + 1)) + "'");
         Self.FDataSet.Close();
+        Self.FDataSet.SetFilter(((('"START">=\'' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + '\' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate + 1)) + "'");
         Self.FDataSet.Load(rtl.createSet(pas.DB.TLoadOption.loNoEvents),SwitchProgressOff);
       } catch ($e) {
         if (pas.SysUtils.Exception.isPrototypeOf($e)) {

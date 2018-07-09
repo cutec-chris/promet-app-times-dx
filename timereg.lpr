@@ -1,5 +1,5 @@
 library timereg;
-  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db;
+  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db, dhtmlx_calendar;
 
 type
 
@@ -61,6 +61,10 @@ begin
       if pos('{',aText)>0 then
         aText := copy(aText,pos('{',aText)+1,length(aText)-pos('{',aText)-1);
     end;
+  'DURATION':
+    begin
+
+    end;
   end;
 end;
 
@@ -104,6 +108,9 @@ end;
 
 constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
   aPattern: string);
+var
+  eDate : JSValue;
+  cDate : TDHTMLXCalendar;
 begin
   inherited Create(aParent, aDataSet);
   with Grid do
@@ -128,6 +135,10 @@ begin
       attachEvent('onClick', @ToolbarButtonClick);
     end;
   DataSet.OnFieldDefsLoaded:=@DataSetAfterOpen;
+  eDate := Toolbar.getInput('datea');
+  cDate := TDHTMLXCalendar.New(eDate);
+  cDate.setDateFormat(DateFormatToDHTMLX(ShortDateFormat));
+  cDate.attachEvent('onChange',@RefreshList);
 end;
 
 procedure TTimeregForm.RefreshList;
@@ -142,8 +153,8 @@ begin
   try
     Page.progressOn();
     aDate := strToDate(string(Toolbar.getValue('datea')));
-    DataSet.ServerFilter:='"START">='''+FormatDateTime('YYYYMMdd',aDate)+''' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate+1)+'''';
     DataSet.Close;
+    DataSet.ServerFilter:='"START">='''+FormatDateTime('YYYYMMdd',aDate)+''' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate+1)+'''';
     DataSet.Load([loNoEvents],@SwitchProgressOff);
   except
     on e : Exception do
