@@ -6,6 +6,11 @@ type
   { TTimeregForm }
 
   TTimeregForm = class(TAvammListForm)
+  private
+    procedure DataSetAfterOpen(DataSet: TObject);
+    procedure DataSetGetText(Sender: TField; var aText: string;
+      DisplayText: Boolean);
+    procedure DataSetSetText(Sender: TField; const aText: string);
   protected
     procedure ToolbarButtonClick(id : string);
   public
@@ -34,6 +39,35 @@ begin
 end;
 
 { TTimeregForm }
+
+procedure TTimeregForm.DataSetAfterOpen(DataSet: TObject);
+begin
+  with DataSet as TDataSet do
+    begin
+      FieldByName('PROJECT').OnGetText:=@DataSetGetText;
+      FieldByName('PROJECT').OnSetText:=@DataSetSetText;
+      FieldByName('DURATION').OnGetText:=@DataSetGetText;
+      FieldByName('DURATION').OnSetText:=@DataSetSetText;
+    end;
+end;
+
+procedure TTimeregForm.DataSetGetText(Sender: TField; var aText: string;
+  DisplayText: Boolean);
+begin
+  aText := Sender.AsString;
+  case Sender.FieldName of
+  'PROJECT':
+    begin
+      if pos('{',aText)>0 then
+        aText := copy(aText,pos('{',aText)+1,length(aText)-pos('{',aText)-1);
+    end;
+  end;
+end;
+
+procedure TTimeregForm.DataSetSetText(Sender: TField; const aText: string);
+begin
+
+end;
 
 procedure TTimeregForm.ToolbarButtonClick(id : string);
 var
@@ -93,6 +127,7 @@ begin
       addSeparator('sep2',1);
       attachEvent('onClick', @ToolbarButtonClick);
     end;
+  DataSet.OnFieldDefsLoaded:=@DataSetAfterOpen;
 end;
 
 procedure TTimeregForm.RefreshList;
@@ -108,7 +143,8 @@ begin
     Page.progressOn();
     aDate := strToDate(string(Toolbar.getValue('datea')));
     DataSet.ServerFilter:='"START">='''+FormatDateTime('YYYYMMdd',aDate)+''' AND "START"<'''+FormatDateTime('YYYYMMdd',aDate+1)+'''';
-    DataSet.Load([],@SwitchProgressOff);
+    DataSet.Close;
+    DataSet.Load([loNoEvents],@SwitchProgressOff);
   except
     on e : Exception do
       begin

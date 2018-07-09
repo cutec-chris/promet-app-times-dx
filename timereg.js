@@ -2,6 +2,22 @@
   "use strict";
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
+    this.DataSetAfterOpen = function (DataSet) {
+      var $with1 = rtl.as(DataSet,pas.DB.TDataSet);
+      $with1.FieldByName("PROJECT").FOnGetText = rtl.createCallback(this,"DataSetGetText");
+      $with1.FieldByName("PROJECT").FOnSetText = rtl.createCallback(this,"DataSetSetText");
+      $with1.FieldByName("DURATION").FOnGetText = rtl.createCallback(this,"DataSetGetText");
+      $with1.FieldByName("DURATION").FOnSetText = rtl.createCallback(this,"DataSetSetText");
+    };
+    this.DataSetGetText = function (Sender, aText, DisplayText) {
+      aText.set(Sender.GetAsString());
+      var $tmp1 = Sender.FFieldName;
+      if ($tmp1 === "PROJECT") {
+        if (pas.System.Pos("{",aText.get()) > 0) aText.set(pas.System.Copy(aText.get(),pas.System.Pos("{",aText.get()) + 1,(aText.get().length - pas.System.Pos("{",aText.get())) - 1));
+      };
+    };
+    this.DataSetSetText = function (Sender, aText) {
+    };
     this.ToolbarButtonClick = function (id) {
       var tmp = "";
       var aDate = 0.0;
@@ -49,6 +65,7 @@
       $with2.addButton("daten",4,"","fa fa-chevron-right","fa fa-chevron-right");
       $with2.addSeparator("sep2",1);
       $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
+      this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
     };
     this.RefreshList = function () {
       var Self = this;
@@ -60,7 +77,8 @@
         Self.Page.progressOn();
         aDate = pas.SysUtils.StrToDate("" + Self.Toolbar.getValue("datea"));
         Self.FDataSet.SetFilter(((('"START">=\'' + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate)) + '\' AND "START"<\'') + pas.SysUtils.FormatDateTime("YYYYMMdd",aDate + 1)) + "'");
-        Self.FDataSet.Load({},SwitchProgressOff);
+        Self.FDataSet.Close();
+        Self.FDataSet.Load(rtl.createSet(pas.DB.TLoadOption.loNoEvents),SwitchProgressOff);
       } catch ($e) {
         if (pas.SysUtils.Exception.isPrototypeOf($e)) {
           var e = $e;
