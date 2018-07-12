@@ -54,6 +54,8 @@
         this.FDataSet.Append();
       };
     };
+    this.DoRowDblClick = function () {
+    };
     this.Create$2 = function (aParent, aDataSet, aPattern) {
       var eDate = undefined;
       var cDate = null;
@@ -66,13 +68,15 @@
       $with1.setColumnHidden(5,true);
       $with1.setInitWidths("*,*,70,*,*");
       $with1.enableValidation();
+      $with1.setEditable(true);
       $with1.init();
+      this.FDataLink.FDataprocessor.init(this.Grid);
       var $with2 = this.Toolbar;
-      $with2.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle","fa fa-plus-circle");
+      $with2.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle");
       $with2.addSeparator("sep1",1);
-      $with2.addButton("datep",2,"","fa fa-chevron-left","fa fa-chevron-left");
+      $with2.addButton("datep",2,"","fa fa-chevron-left");
       $with2.addInput("datea",3,"",null);
-      $with2.addButton("daten",4,"","fa fa-chevron-right","fa fa-chevron-right");
+      $with2.addButton("daten",4,"","fa fa-chevron-right");
       $with2.addSeparator("sep2",1);
       $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
       this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");

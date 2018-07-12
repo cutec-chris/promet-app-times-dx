@@ -13,6 +13,7 @@ type
     procedure DataSetSetText(Sender: TField; const aText: string);
   protected
     procedure ToolbarButtonClick(id : string);
+    procedure DoRowDblClick; override;
   public
     constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
     procedure RefreshList; override;
@@ -111,6 +112,10 @@ begin
   ;
 end;
 
+procedure TTimeregForm.DoRowDblClick;
+begin
+end;
+
 constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
   aPattern: string);
 var
@@ -127,15 +132,17 @@ begin
       setColumnHidden(5,true);
       setInitWidths('*,*,70,*,*');
       enableValidation;
+      setEditable(true);
       init();
+      DataLink.Dataprocessor.init(Grid);
     end;
   with Toolbar do
     begin
-      addButton('new',0,strNew,'fa fa-plus-circle','fa fa-plus-circle');
+      addButton('new',0,strNew,'fa fa-plus-circle');
       addSeparator('sep1',1);
-      addButton('datep',2,'','fa fa-chevron-left','fa fa-chevron-left');
+      addButton('datep',2,'','fa fa-chevron-left');
       addInput('datea',3,'',null);
-      addButton('daten',4,'','fa fa-chevron-right','fa fa-chevron-right');
+      addButton('daten',4,'','fa fa-chevron-right');
       addSeparator('sep2',1);
       attachEvent('onClick', @ToolbarButtonClick);
     end;
