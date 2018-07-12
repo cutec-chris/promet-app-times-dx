@@ -106,7 +106,7 @@ begin
     end
   else if (id='new') then
     begin
-
+      DataSet.Append;
     end
   ;
 end;
@@ -120,7 +120,7 @@ begin
   inherited Create(aParent, aDataSet);
   with Grid do
     begin
-      setHeader('Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID',',',TJSArray._of([]));
+      setHeader('Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID');
       setColumnIds('PROJECT,JOB,DURATION,NOTE,START,PROJECTID');
       setColValidators('NotEmpty,NotEmpty,ValidTime,null,NotEmpty');
       setColumnHidden(4,true);

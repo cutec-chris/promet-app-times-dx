@@ -50,14 +50,16 @@
         aDate = aDate - 1;
         this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
         this.RefreshList();
-      } else if (id === "new") ;
+      } else if (id === "new") {
+        this.FDataSet.Append();
+      };
     };
-    this.Create$1 = function (aParent, aDataSet, aPattern) {
+    this.Create$2 = function (aParent, aDataSet, aPattern) {
       var eDate = undefined;
       var cDate = null;
-      pas.AvammForms.TAvammListForm.Create$1.call(this,aParent,aDataSet,"1C");
+      pas.AvammForms.TAvammListForm.Create$2.call(this,aParent,aDataSet,"1C");
       var $with1 = this.Grid;
-      $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID",",",Array.of({}));
+      $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID");
       $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE,START,PROJECTID");
       $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
       $with1.setColumnHidden(4,true);
@@ -110,7 +112,7 @@
     var aParent = null;
     if (!($mod.List != null)) {
       aParent = rtl.getObject(pas.Avamm.GetAvammContainer());
-      $mod.List = $mod.TTimeregForm.$create("Create$1",[aParent,"times","1C"]);
+      $mod.List = $mod.TTimeregForm.$create("Create$2",[aParent,"times","1C"]);
     };
     $mod.List.Show();
   };
