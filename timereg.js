@@ -23,6 +23,7 @@
       };
     };
     this.DataSetSetText = function (Sender, aText) {
+      this.Toolbar.enableItem("save");
     };
     this.ToolbarButtonClick = function (id) {
       var tmp = "";
@@ -52,6 +53,9 @@
         this.RefreshList();
       } else if (id === "new") {
         this.FDataSet.Append();
+        this.Toolbar.enableItem("save");
+      } else if (id === "save") {
+        this.FDataSet.ApplyUpdates();
       };
     };
     this.DoRowDblClick = function () {
@@ -72,13 +76,15 @@
       $with1.init();
       this.FDataLink.FDataprocessor.init(this.Grid);
       var $with2 = this.Toolbar;
-      $with2.addButton("new",0,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle");
-      $with2.addSeparator("sep1",1);
-      $with2.addButton("datep",2,"","fa fa-chevron-left");
-      $with2.addInput("datea",3,"",null);
-      $with2.addButton("daten",4,"","fa fa-chevron-right");
-      $with2.addSeparator("sep2",1);
+      $with2.addButton("save",0,rtl.getResStr(pas.timereg,"strSave"),"fa fa-save");
+      $with2.addButton("new",1,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle");
+      $with2.addSeparator("sep1",2);
+      $with2.addButton("datep",3,"","fa fa-chevron-left");
+      $with2.addInput("datea",4,"",null);
+      $with2.addButton("daten",5,"","fa fa-chevron-right");
+      $with2.addSeparator("sep2",6);
       $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
+      $with2.disableItem("save");
       this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
       eDate = this.Toolbar.getInput("datea");
       cDate = new dhtmlXCalendarObject(eDate);
@@ -89,6 +95,7 @@
       var Self = this;
       function SwitchProgressOff(DataSet, Data) {
         Self.Page.progressOff();
+        Self.Toolbar.disableItem("save");
       };
       var aDate = 0.0;
       try {
@@ -120,7 +127,7 @@
     };
     $mod.List.Show();
   };
-  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}};
+  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}, strSave: {org: "Speichern"}};
   $mod.$init = function () {
     if (pas.Avamm.getRight("timereg") > 0) pas.Avamm.RegisterSidebarRoute(rtl.getResStr(pas.timereg,"strTimeregistering"),"timeregistering",$mod.ShowTimereg);
   };

@@ -23,6 +23,7 @@ type
 resourcestring
   strTimeregistering     = 'Zeiterfassung';
   strNew                 = 'Neu';
+  strSave                = 'Speichern';
 
 var
   List: TAvammListForm = nil;
@@ -76,6 +77,7 @@ end;
 
 procedure TTimeregForm.DataSetSetText(Sender: TField; const aText: string);
 begin
+  Toolbar.enableItem('save');
 
 end;
 
@@ -108,6 +110,11 @@ begin
   else if (id='new') then
     begin
       DataSet.Append;
+      Toolbar.enableItem('save');
+    end
+  else if (id='save') then
+    begin
+      DataSet.ApplyUpdates;
     end
   ;
 end;
@@ -138,13 +145,15 @@ begin
     end;
   with Toolbar do
     begin
-      addButton('new',0,strNew,'fa fa-plus-circle');
-      addSeparator('sep1',1);
-      addButton('datep',2,'','fa fa-chevron-left');
-      addInput('datea',3,'',null);
-      addButton('daten',4,'','fa fa-chevron-right');
-      addSeparator('sep2',1);
+      addButton('save',0,strSave,'fa fa-save');
+      addButton('new',1,strNew,'fa fa-plus-circle');
+      addSeparator('sep1',2);
+      addButton('datep',3,'','fa fa-chevron-left');
+      addInput('datea',4,'',null);
+      addButton('daten',5,'','fa fa-chevron-right');
+      addSeparator('sep2',6);
       attachEvent('onClick', @ToolbarButtonClick);
+      disableItem('save');
     end;
   DataSet.OnFieldDefsLoaded:=@DataSetAfterOpen;
   eDate := Toolbar.getInput('datea');
@@ -157,6 +166,7 @@ procedure TTimeregForm.RefreshList;
   procedure SwitchProgressOff(DataSet: TDataSet; Data: JSValue);
   begin
     Page.progressOff;
+    Toolbar.disableItem('save');
   end;
 
 var
