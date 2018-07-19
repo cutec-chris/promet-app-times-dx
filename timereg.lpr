@@ -110,6 +110,7 @@ begin
   else if (id='new') then
     begin
       DataSet.Append;
+      DataSet.FieldByName('START').AsDateTime := Now();
       Toolbar.enableItem('save');
     end
   else if (id='save') then
@@ -132,11 +133,9 @@ begin
   inherited Create(aParent, aDataSet);
   with Grid do
     begin
-      setHeader('Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID');
-      setColumnIds('PROJECT,JOB,DURATION,NOTE,START,PROJECTID');
-      setColValidators('NotEmpty,NotEmpty,ValidTime,null,NotEmpty');
-      setColumnHidden(4,true);
-      setColumnHidden(5,true);
+      setHeader('Projekt,Aufgabe,Dauer (h),Notiz');
+      setColumnIds('PROJECT,JOB,DURATION,NOTE');
+      setColValidators('NotEmpty,NotEmpty,ValidTime,null');
       setInitWidths('*,*,70,*,*');
       enableValidation;
       setEditable(true);
@@ -145,8 +144,10 @@ begin
     end;
   with Toolbar do
     begin
-      addButton('save',0,strSave,'fa fa-save');
-      addButton('new',1,strNew,'fa fa-plus-circle');
+      addButton('save',0,'','fa fa-save','fa fa-save');
+      setItemToolTip('save',strSave);
+      addButton('new',1,'','fa fa-plus-circle','fa fa-plus-circle');
+      setItemToolTip('new',strNew);
       addSeparator('sep1',2);
       addButton('datep',3,'','fa fa-chevron-left');
       addInput('datea',4,'',null);

@@ -53,6 +53,7 @@
         this.RefreshList();
       } else if (id === "new") {
         this.FDataSet.Append();
+        this.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
         this.Toolbar.enableItem("save");
       } else if (id === "save") {
         this.FDataSet.ApplyUpdates();
@@ -65,19 +66,19 @@
       var cDate = null;
       pas.AvammForms.TAvammListForm.Create$2.call(this,aParent,aDataSet,"1C");
       var $with1 = this.Grid;
-      $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz,Start,Project ID");
-      $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE,START,PROJECTID");
-      $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null,NotEmpty");
-      $with1.setColumnHidden(4,true);
-      $with1.setColumnHidden(5,true);
+      $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz");
+      $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE");
+      $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null");
       $with1.setInitWidths("*,*,70,*,*");
       $with1.enableValidation();
       $with1.setEditable(true);
       $with1.init();
       this.FDataLink.FDataprocessor.init(this.Grid);
       var $with2 = this.Toolbar;
-      $with2.addButton("save",0,rtl.getResStr(pas.timereg,"strSave"),"fa fa-save");
-      $with2.addButton("new",1,rtl.getResStr(pas.timereg,"strNew"),"fa fa-plus-circle");
+      $with2.addButton("save",0,"","fa fa-save","fa fa-save");
+      $with2.setItemToolTip("save",rtl.getResStr(pas.timereg,"strSave"));
+      $with2.addButton("new",1,"","fa fa-plus-circle","fa fa-plus-circle");
+      $with2.setItemToolTip("new",rtl.getResStr(pas.timereg,"strNew"));
       $with2.addSeparator("sep1",2);
       $with2.addButton("datep",3,"","fa fa-chevron-left");
       $with2.addInput("datea",4,"",null);
