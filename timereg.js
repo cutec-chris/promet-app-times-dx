@@ -54,9 +54,15 @@
       } else if (id === "new") {
         this.FDataSet.Append();
         this.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
+        this.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
         this.Toolbar.enableItem("save");
       } else if (id === "save") {
-        if (this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) this.FDataSet.Post();
+        if (this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) {
+          this.FDataSet.DisableControls();
+          this.FDataSet.Append();
+          this.FDataSet.Cancel();
+          this.FDataSet.EnableControls();
+        };
         this.FDataSet.ApplyUpdates();
       };
     };

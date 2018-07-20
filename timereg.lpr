@@ -111,12 +111,18 @@ begin
     begin
       DataSet.Append;
       DataSet.FieldByName('START').AsDateTime := Now();
+      DataSet.FieldByName('ISPAUSE').AsString := 'N';
       Toolbar.enableItem('save');
     end
   else if (id='save') then
     begin
       if DataSet.State in [dsEdit,dsInsert] then
-        DataSet.Post;
+        begin
+          DataSet.DisableControls;
+          DataSet.Append;
+          DataSet.Cancel;
+          DataSet.EnableControls;
+        end;
       DataSet.ApplyUpdates;
     end
   ;
