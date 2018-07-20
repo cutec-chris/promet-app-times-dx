@@ -115,6 +115,8 @@ begin
     end
   else if (id='save') then
     begin
+      if DataSet.State in [dsEdit,dsInsert] then
+        DataSet.Post;
       DataSet.ApplyUpdates;
     end
   ;
@@ -197,6 +199,6 @@ end;
 
 initialization
   if getRight('timereg')>0 then
-    RegisterSidebarRoute(strTimeregistering,'timeregistering',@ShowTimereg);
+    RegisterSidebarRoute(strTimeregistering,'timeregistering',@ShowTimereg,'fa-clock-o');
 end.
 

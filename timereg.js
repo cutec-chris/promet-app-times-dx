@@ -56,6 +56,7 @@
         this.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
         this.Toolbar.enableItem("save");
       } else if (id === "save") {
+        if (this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) this.FDataSet.Post();
         this.FDataSet.ApplyUpdates();
       };
     };
@@ -130,7 +131,7 @@
   };
   $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}, strSave: {org: "Speichern"}};
   $mod.$init = function () {
-    if (pas.Avamm.getRight("timereg") > 0) pas.Avamm.RegisterSidebarRoute(rtl.getResStr(pas.timereg,"strTimeregistering"),"timeregistering",$mod.ShowTimereg);
+    if (pas.Avamm.getRight("timereg") > 0) pas.Avamm.RegisterSidebarRoute(rtl.getResStr(pas.timereg,"strTimeregistering"),"timeregistering",$mod.ShowTimereg,"fa-clock-o");
   };
 });
 //# sourceMappingURL=timereg.js.map
