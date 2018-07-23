@@ -23,7 +23,23 @@
       };
     };
     this.DataSetSetText = function (Sender, aText) {
+      var tmp = "";
+      var tmp2 = "";
       this.Toolbar.enableItem("save");
+      var $tmp1 = Sender.FFieldName;
+      if ($tmp1 === "PROJECT") {}
+      else if ($tmp1 === "DURATION") {
+        tmp = pas.System.Copy(aText,0,pas.System.Pos(" ",aText) - 1);
+        var $tmp2 = pas.SysUtils.LowerCase(tmp);
+        if ($tmp2 === "min") {
+          tmp2 = pas.System.Copy(aText,0,pas.System.Pos(" ",aText) - 1);
+          Sender.SetAsFloat((pas.SysUtils.StrToInt(tmp2) / 60) / 8);
+        } else {
+          Sender.SetAsFloat(pas.SysUtils.StrToFloat(aText) / 8);
+        };
+      } else {
+        Sender.SetAsString(aText);
+      };
     };
     this.ToolbarButtonClick = function (id) {
       var tmp = "";

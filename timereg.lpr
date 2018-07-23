@@ -76,9 +76,31 @@ begin
 end;
 
 procedure TTimeregForm.DataSetSetText(Sender: TField; const aText: string);
+var
+  tmp, tmp2: String;
 begin
   Toolbar.enableItem('save');
-
+  case Sender.FieldName of
+  'PROJECT':
+    begin
+      //TODO
+    end;
+  'DURATION':
+    begin
+      tmp := copy(aText,0,pos(' ',aText)-1);
+      case lowercase(tmp) of
+      'min':
+        begin
+          tmp2 := copy(atext,0,pos(' ',aText)-1);
+          Sender.AsFloat:= StrToInt(tmp2)/60/8
+        end;
+      else
+        Sender.AsFloat:=StrToFloat(aText)/8;
+      end;
+    end
+  else
+    Sender.AsString:=aText;
+  end;
 end;
 
 procedure TTimeregForm.ToolbarButtonClick(id : string);
