@@ -87,7 +87,7 @@ begin
     end;
   'DURATION':
     begin
-      tmp := copy(aText,0,pos(' ',aText)-1);
+      tmp := copy(aText,pos(' ',aText)+1,length(aText));
       case lowercase(tmp) of
       'min':
         begin
