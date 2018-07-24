@@ -1,4 +1,4 @@
-﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB","dhtmlx_calendar"],function () {
+﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB","dhtmlx_calendar","dhtmlx_base"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
@@ -27,8 +27,9 @@
       var tmp2 = "";
       this.Toolbar.enableItem("save");
       var $tmp1 = Sender.FFieldName;
-      if ($tmp1 === "PROJECT") {}
-      else if ($tmp1 === "DURATION") {
+      if ($tmp1 === "PROJECT") {
+        Sender.SetAsString(aText);
+      } else if ($tmp1 === "DURATION") {
         tmp = pas.System.Copy(aText,pas.System.Pos(" ",aText) + 1,aText.length);
         var $tmp2 = pas.SysUtils.LowerCase(tmp);
         if ($tmp2 === "min") {
@@ -42,44 +43,74 @@
       };
     };
     this.ToolbarButtonClick = function (id) {
+      var Self = this;
       var tmp = "";
       var aDate = 0.0;
+      function DoRefreshList(aValue) {
+        var Result = undefined;
+        if (aValue) Self.RefreshList();
+        return Result;
+      };
+      function DoDateN(aValue) {
+        var Result = undefined;
+        Self.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
+        Self.RefreshList();
+        return Result;
+      };
+      function DoNothing(aValue) {
+        var Result = undefined;
+        return Result;
+      };
+      function CheckSavedRefresh() {
+        var Result = null;
+        function CheckPromise(resolve, reject) {
+          function DoRefreshIt(par) {
+            if (par) {
+              resolve(true)}
+             else reject(false);
+          };
+          if (Self.Toolbar.isEnabled("save")) {
+            dhtmlx.message(pas.JS.New(["type","confirm","text",rtl.getResStr(pas.timereg,"strReallyCancel"),"cancel",rtl.getResStr(pas.timereg,"strNo"),"ok",rtl.getResStr(pas.timereg,"strYes"),"callback",DoRefreshIt]));
+          } else resolve(true);
+        };
+        Result = new Promise(CheckPromise);
+        return Result;
+      };
       aDate = pas.SysUtils.Now();
       if (id === "refresh") {
-        this.RefreshList();
+        CheckSavedRefresh().then(DoRefreshList).catch(DoNothing);
       } else if (id === "daten") {
-        tmp = "" + this.Toolbar.getValue("datea");
+        tmp = "" + Self.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
             return aDate;
           }, set: function (v) {
             aDate = v;
           }});
         aDate = aDate + 1;
-        this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
-        this.RefreshList();
+        CheckSavedRefresh().then(DoDateN).catch(DoNothing);
       } else if (id === "datep") {
-        tmp = "" + this.Toolbar.getValue("datea");
+        tmp = "" + Self.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
             return aDate;
           }, set: function (v) {
             aDate = v;
           }});
         aDate = aDate - 1;
-        this.Toolbar.setValue("datea",pas.SysUtils.DateToStr(aDate));
-        this.RefreshList();
+        CheckSavedRefresh().then(DoDateN).catch(DoNothing);
       } else if (id === "new") {
-        this.FDataSet.Append();
-        this.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
-        this.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
-        this.Toolbar.enableItem("save");
+        Self.FDataSet.Append();
+        Self.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
+        Self.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
+        Self.Toolbar.enableItem("save");
       } else if (id === "save") {
-        if (this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) {
-          this.FDataSet.DisableControls();
-          this.FDataSet.Append();
-          this.FDataSet.Cancel();
-          this.FDataSet.EnableControls();
+        if (Self.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) {
+          Self.FDataSet.DisableControls();
+          Self.FDataSet.Append();
+          Self.FDataSet.Cancel();
+          Self.FDataSet.EnableControls();
         };
-        this.FDataSet.ApplyUpdates();
+        Self.FDataSet.ApplyUpdates();
+        Self.Toolbar.disableItem("save");
       };
     };
     this.DoRowDblClick = function () {
@@ -107,7 +138,6 @@
       $with2.addInput("datea",4,"",null);
       $with2.addButton("daten",5,"","fa fa-chevron-right");
       $with2.addSeparator("sep2",6);
-      $with2.attachEvent("onClick",rtl.createCallback(this,"ToolbarButtonClick"));
       $with2.disableItem("save");
       this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
       eDate = this.Toolbar.getInput("datea");
@@ -151,7 +181,7 @@
     };
     $mod.List.Show();
   };
-  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}, strSave: {org: "Speichern"}};
+  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}, strSave: {org: "Speichern"}, strReallyCancel: {org: "Änderungen verwerfen ?"}, strNo: {org: "Nein"}, strYes: {org: "Ja"}};
   $mod.$init = function () {
     if (pas.Avamm.getRight("timereg") > 0) pas.Avamm.RegisterSidebarRoute(rtl.getResStr(pas.timereg,"strTimeregistering"),"timeregistering",$mod.ShowTimereg,"fa-clock-o");
   };

@@ -1,5 +1,6 @@
 library timereg;
-  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db, dhtmlx_calendar;
+  uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db,
+    dhtmlx_calendar,dhtmlx_base;
 
 type
 
@@ -12,7 +13,7 @@ type
       DisplayText: Boolean);
     procedure DataSetSetText(Sender: TField; const aText: string);
   protected
-    procedure ToolbarButtonClick(id : string);
+    procedure ToolbarButtonClick(id : string);override;
     procedure DoRowDblClick; override;
   public
     constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
@@ -24,6 +25,9 @@ resourcestring
   strTimeregistering     = 'Zeiterfassung';
   strNew                 = 'Neu';
   strSave                = 'Speichern';
+  strReallyCancel        = 'Änderungen verwerfen ?';
+  strNo                  = 'Nein';
+  strYes                 = 'Ja';
 
 var
   List: TAvammListForm = nil;
@@ -84,6 +88,7 @@ begin
   'PROJECT':
     begin
       //TODO
+      Sender.AsString:=aText;
     end;
   'DURATION':
     begin
@@ -107,27 +112,64 @@ procedure TTimeregForm.ToolbarButtonClick(id : string);
 var
   tmp: String;
   aDate: TDateTime;
+  function DoRefreshList(aValue: JSValue): JSValue;
+  begin
+    if aValue then
+      RefreshList;
+  end;
+  function DoDateN(aValue : JSValue) : JSValue;
+  begin
+    Toolbar.setValue('datea', DateToStr(aDate));
+    RefreshList;
+  end;
+  function DoNothing(aValue : JSValue) : JSValue;
+  begin
+  end;
+
+  function CheckSavedRefresh : TJSPromise;
+    procedure CheckPromise(resolve, reject: TJSPromiseResolver);
+      procedure DoRefreshIt(par : Boolean);
+      begin
+        if par then
+          resolve(true)
+        else reject(false);
+      end;
+    begin
+      if Toolbar.isEnabled('save') then
+        begin
+          dhtmlx.message(js.new(['type','confirm',
+                                 'text',strReallyCancel,
+                                 'cancel',strNo,
+                                 'ok',strYes,
+                                 'callback',@DoRefreshIt]));
+        end
+      else
+        resolve(True);
+    end;
+
+  begin
+    Result := TJSPromise.new(@CheckPromise);
+  end;
+
 begin
   aDate := now();
   if (id='refresh') then
     begin
-      RefreshList;
+      CheckSavedRefresh._then(@DoRefreshList).catch(@DoNothing);
     end
   else if (id='daten') then
     begin
       tmp := string(Toolbar.getValue('datea'));
       TryStrToDate(tmp,aDate);
       aDate := aDate + 1;
-      Toolbar.setValue('datea', DateToStr(aDate));
-      RefreshList;
+      CheckSavedRefresh._then(@DoDateN).catch(@DoNothing);
     end
   else if (id='datep') then
     begin
       tmp := string(Toolbar.getValue('datea'));
       TryStrToDate(tmp,aDate);
       aDate := aDate - 1;
-      Toolbar.setValue('datea', DateToStr(aDate));
-      RefreshList;
+      CheckSavedRefresh._then(@DoDateN).catch(@DoNothing);
     end
   else if (id='new') then
     begin
@@ -146,6 +188,7 @@ begin
           DataSet.EnableControls;
         end;
       DataSet.ApplyUpdates;
+      Toolbar.disableItem('save');
     end
   ;
 end;
@@ -183,7 +226,6 @@ begin
       addInput('datea',4,'',null);
       addButton('daten',5,'','fa fa-chevron-right');
       addSeparator('sep2',6);
-      attachEvent('onClick', @ToolbarButtonClick);
       disableItem('save');
     end;
   DataSet.OnFieldDefsLoaded:=@DataSetAfterOpen;
