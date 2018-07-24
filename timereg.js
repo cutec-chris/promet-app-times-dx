@@ -61,24 +61,9 @@
         var Result = undefined;
         return Result;
       };
-      function CheckSavedRefresh() {
-        var Result = null;
-        function CheckPromise(resolve, reject) {
-          function DoRefreshIt(par) {
-            if (par) {
-              resolve(true)}
-             else reject(false);
-          };
-          if (Self.Toolbar.isEnabled("save")) {
-            dhtmlx.message(pas.JS.New(["type","confirm","text",rtl.getResStr(pas.timereg,"strReallyCancel"),"cancel",rtl.getResStr(pas.timereg,"strNo"),"ok",rtl.getResStr(pas.timereg,"strYes"),"callback",DoRefreshIt]));
-          } else resolve(true);
-        };
-        Result = new Promise(CheckPromise);
-        return Result;
-      };
       aDate = pas.SysUtils.Now();
       if (id === "refresh") {
-        CheckSavedRefresh().then(DoRefreshList).catch(DoNothing);
+        pas.AvammForms.CheckSaved(Self.Toolbar).then(DoRefreshList).catch(DoNothing);
       } else if (id === "daten") {
         tmp = "" + Self.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
@@ -87,7 +72,7 @@
             aDate = v;
           }});
         aDate = aDate + 1;
-        CheckSavedRefresh().then(DoDateN).catch(DoNothing);
+        pas.AvammForms.CheckSaved(Self.Toolbar).then(DoDateN).catch(DoNothing);
       } else if (id === "datep") {
         tmp = "" + Self.Toolbar.getValue("datea");
         pas.SysUtils.TryStrToDate(tmp,{get: function () {
@@ -96,7 +81,7 @@
             aDate = v;
           }});
         aDate = aDate - 1;
-        CheckSavedRefresh().then(DoDateN).catch(DoNothing);
+        pas.AvammForms.CheckSaved(Self.Toolbar).then(DoDateN).catch(DoNothing);
       } else if (id === "new") {
         Self.FDataSet.Append();
         Self.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
@@ -130,9 +115,9 @@
       this.FDataLink.FDataprocessor.init(this.Grid);
       var $with2 = this.Toolbar;
       $with2.addButton("save",0,"","fa fa-save","fa fa-save");
-      $with2.setItemToolTip("save",rtl.getResStr(pas.timereg,"strSave"));
+      $with2.setItemToolTip("save",rtl.getResStr(pas.AvammForms,"strSave"));
       $with2.addButton("new",1,"","fa fa-plus-circle","fa fa-plus-circle");
-      $with2.setItemToolTip("new",rtl.getResStr(pas.timereg,"strNew"));
+      $with2.setItemToolTip("new",rtl.getResStr(pas.AvammForms,"strNew"));
       $with2.addSeparator("sep1",2);
       $with2.addButton("datep",3,"","fa fa-chevron-left");
       $with2.addInput("datea",4,"",null);
@@ -181,7 +166,7 @@
     };
     $mod.List.Show();
   };
-  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}, strNew: {org: "Neu"}, strSave: {org: "Speichern"}, strReallyCancel: {org: "Änderungen verwerfen ?"}, strNo: {org: "Nein"}, strYes: {org: "Ja"}};
+  $mod.$resourcestrings = {strTimeregistering: {org: "Zeiterfassung"}};
   $mod.$init = function () {
     if (pas.Avamm.getRight("timereg") > 0) pas.Avamm.RegisterSidebarRoute(rtl.getResStr(pas.timereg,"strTimeregistering"),"timeregistering",$mod.ShowTimereg,"fa-clock-o");
   };

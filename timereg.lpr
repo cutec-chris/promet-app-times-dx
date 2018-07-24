@@ -23,11 +23,6 @@ type
 
 resourcestring
   strTimeregistering     = 'Zeiterfassung';
-  strNew                 = 'Neu';
-  strSave                = 'Speichern';
-  strReallyCancel        = 'Änderungen verwerfen ?';
-  strNo                  = 'Nein';
-  strYes                 = 'Ja';
 
 var
   List: TAvammListForm = nil;
@@ -125,51 +120,25 @@ var
   function DoNothing(aValue : JSValue) : JSValue;
   begin
   end;
-
-  function CheckSavedRefresh : TJSPromise;
-    procedure CheckPromise(resolve, reject: TJSPromiseResolver);
-      procedure DoRefreshIt(par : Boolean);
-      begin
-        if par then
-          resolve(true)
-        else reject(false);
-      end;
-    begin
-      if Toolbar.isEnabled('save') then
-        begin
-          dhtmlx.message(js.new(['type','confirm',
-                                 'text',strReallyCancel,
-                                 'cancel',strNo,
-                                 'ok',strYes,
-                                 'callback',@DoRefreshIt]));
-        end
-      else
-        resolve(True);
-    end;
-
-  begin
-    Result := TJSPromise.new(@CheckPromise);
-  end;
-
 begin
   aDate := now();
   if (id='refresh') then
     begin
-      CheckSavedRefresh._then(@DoRefreshList).catch(@DoNothing);
+      CheckSaved(Toolbar)._then(@DoRefreshList).catch(@DoNothing);
     end
   else if (id='daten') then
     begin
       tmp := string(Toolbar.getValue('datea'));
       TryStrToDate(tmp,aDate);
       aDate := aDate + 1;
-      CheckSavedRefresh._then(@DoDateN).catch(@DoNothing);
+      CheckSaved(Toolbar)._then(@DoDateN).catch(@DoNothing);
     end
   else if (id='datep') then
     begin
       tmp := string(Toolbar.getValue('datea'));
       TryStrToDate(tmp,aDate);
       aDate := aDate - 1;
-      CheckSavedRefresh._then(@DoDateN).catch(@DoNothing);
+      CheckSaved(Toolbar)._then(@DoDateN).catch(@DoNothing);
     end
   else if (id='new') then
     begin
