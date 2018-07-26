@@ -87,6 +87,9 @@
         Self.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
         Self.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
         Self.Toolbar.enableItem("save");
+      } else if (id === "delete") {
+        Self.FDataSet.Delete();
+        Self.Toolbar.enableItem("save");
       } else if (id === "save") {
         if (Self.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) {
           Self.FDataSet.DisableControls();
@@ -99,6 +102,9 @@
       };
     };
     this.DoRowDblClick = function () {
+      var Result = false;
+      Result = false;
+      return Result;
     };
     this.Create$2 = function (aParent, aDataSet, aPattern) {
       var eDate = undefined;
@@ -118,11 +124,13 @@
       $with2.setItemToolTip("save",rtl.getResStr(pas.AvammForms,"strSave"));
       $with2.addButton("new",1,"","fa fa-plus-circle","fa fa-plus-circle");
       $with2.setItemToolTip("new",rtl.getResStr(pas.AvammForms,"strNew"));
-      $with2.addSeparator("sep1",2);
-      $with2.addButton("datep",3,"","fa fa-chevron-left");
-      $with2.addInput("datea",4,"",null);
-      $with2.addButton("daten",5,"","fa fa-chevron-right");
-      $with2.addSeparator("sep2",6);
+      $with2.addButton("delete",2,"","fa fa-minus-circle","fa fa-minus-circle");
+      $with2.setItemToolTip("delete",rtl.getResStr(pas.AvammForms,"strDelete"));
+      $with2.addSeparator("sep1",3);
+      $with2.addButton("datep",4,"","fa fa-chevron-left");
+      $with2.addInput("datea",5,"",null);
+      $with2.addButton("daten",6,"","fa fa-chevron-right");
+      $with2.addSeparator("sep2",7);
       $with2.disableItem("save");
       this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
       eDate = this.Toolbar.getInput("datea");

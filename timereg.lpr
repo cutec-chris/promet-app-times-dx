@@ -14,7 +14,7 @@ type
     procedure DataSetSetText(Sender: TField; const aText: string);
   protected
     procedure ToolbarButtonClick(id : string);override;
-    procedure DoRowDblClick; override;
+    function DoRowDblClick : Boolean; override;
   public
     constructor Create(aParent : TJSElement;aDataSet : string;aPattern : string = '1C');override;
     procedure RefreshList; override;
@@ -147,6 +147,11 @@ begin
       DataSet.FieldByName('ISPAUSE').AsString := 'N';
       Toolbar.enableItem('save');
     end
+  else if (id='delete') then
+    begin
+      DataSet.Delete;
+      Toolbar.enableItem('save');
+    end
   else if (id='save') then
     begin
       if DataSet.State in [dsEdit,dsInsert] then
@@ -162,8 +167,9 @@ begin
   ;
 end;
 
-procedure TTimeregForm.DoRowDblClick;
+function TTimeregForm.DoRowDblClick: Boolean;
 begin
+  Result := False;
 end;
 
 constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
@@ -190,11 +196,13 @@ begin
       setItemToolTip('save',strSave);
       addButton('new',1,'','fa fa-plus-circle','fa fa-plus-circle');
       setItemToolTip('new',strNew);
-      addSeparator('sep1',2);
-      addButton('datep',3,'','fa fa-chevron-left');
-      addInput('datea',4,'',null);
-      addButton('daten',5,'','fa fa-chevron-right');
-      addSeparator('sep2',6);
+      addButton('delete',2,'','fa fa-minus-circle','fa fa-minus-circle');
+      setItemToolTip('delete',strDelete);
+      addSeparator('sep1',3);
+      addButton('datep',4,'','fa fa-chevron-left');
+      addInput('datea',5,'',null);
+      addButton('daten',6,'','fa fa-chevron-right');
+      addSeparator('sep2',7);
       disableItem('save');
     end;
   DataSet.OnFieldDefsLoaded:=@DataSetAfterOpen;
