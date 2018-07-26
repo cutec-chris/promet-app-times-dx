@@ -169,7 +169,7 @@ end;
 
 function TTimeregForm.DoRowDblClick: Boolean;
 begin
-  Result := False;
+  Result := True;//enable Edit (process Event further in Grid)
 end;
 
 constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
@@ -185,6 +185,7 @@ begin
       setColumnIds('PROJECT,JOB,DURATION,NOTE');
       setColValidators('NotEmpty,NotEmpty,ValidTime,null');
       setInitWidths('*,*,70,*,*');
+      enableEditEvents(false,true,true);
       enableValidation;
       setEditable(true);
       init();

@@ -103,7 +103,7 @@
     };
     this.DoRowDblClick = function () {
       var Result = false;
-      Result = false;
+      Result = true;
       return Result;
     };
     this.Create$2 = function (aParent, aDataSet, aPattern) {
@@ -115,6 +115,7 @@
       $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE");
       $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null");
       $with1.setInitWidths("*,*,70,*,*");
+      $with1.enableEditEvents(false,true,true);
       $with1.enableValidation();
       $with1.setEditable(true);
       $with1.init();
