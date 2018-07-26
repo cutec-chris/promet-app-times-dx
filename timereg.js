@@ -88,7 +88,7 @@
         Self.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
         Self.Toolbar.enableItem("save");
       } else if (id === "delete") {
-        Self.FDataSet.Delete();
+        Self.FDataLink.FDatastore.remove(Self.Grid.getSelectedRowId());
         Self.Toolbar.enableItem("save");
       } else if (id === "save") {
         if (Self.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsEdit,pas.DB.TDataSetState.dsInsert)) {

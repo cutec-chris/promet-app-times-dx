@@ -149,7 +149,7 @@ begin
     end
   else if (id='delete') then
     begin
-      DataSet.Delete;
+      DataLink.Datastore.remove(Grid.getSelectedRowId); //Use the grid method, DataSet possibly dont know on which record we are since Dataprocessor dont reports it
       Toolbar.enableItem('save');
     end
   else if (id='save') then
