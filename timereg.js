@@ -1,7 +1,15 @@
-﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB","dhtmlx_calendar","dhtmlx_base"],function () {
+﻿rtl.module("timereg",["System","JS","Web","Classes","Avamm","webrouter","AvammForms","SysUtils","DB","dhtmlx_calendar","dhtmlx_base","dhtmlx_grid","AvammAutocomplete"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass($mod,"TTimeregForm",pas.AvammForms.TAvammListForm,function () {
+    this.$init = function () {
+      pas.AvammForms.TAvammListForm.$init.call(this);
+      this.ProjectComplete = null;
+    };
+    this.$final = function () {
+      this.ProjectComplete = undefined;
+      pas.AvammForms.TAvammListForm.$final.call(this);
+    };
     this.DataSetAfterOpen = function (DataSet) {
       var $with1 = rtl.as(DataSet,pas.DB.TDataSet);
       $with1.FieldByName("PROJECT").FOnGetText = rtl.createCallback(this,"DataSetGetText");
@@ -40,6 +48,16 @@
         };
       } else {
         Sender.SetAsString(aText);
+      };
+    };
+    this.CompleteProjectDblClick = function (Sender) {
+      if ((this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsInsert)) || this.FDataSet.Locate("SQL_ID",this.Grid.getSelectedRowId(),{})) {
+        if (!(this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsInsert))) this.FDataSet.Edit();
+        this.FDataSet.FieldByName("PROJECT").SetAsString(((("PROJECTS@" + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),2).getValue()) + "{") + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue()) + "}");
+        this.Grid.cells(this.Grid.getSelectedRowId(),0).setValue(this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue());
+        this.ProjectComplete.Popup.hide();
+        this.ProjectComplete.Grid.clearSelection();
+        this.Toolbar.enableItem("save");
       };
     };
     this.ToolbarButtonClick = function (id) {
@@ -107,10 +125,35 @@
       return Result;
     };
     this.Create$2 = function (aParent, aDataSet, aPattern) {
+      var Self = this;
       var eDate = undefined;
       var cDate = null;
-      pas.AvammForms.TAvammListForm.Create$2.call(this,aParent,aDataSet,"1C");
-      var $with1 = this.Grid;
+      function DoEditgridCell(stage, rId, cInd, nValue, oValue) {
+        var Result = false;
+        var cell = null;
+        var rect = null;
+        Result = true;
+        if ((stage === 2) && !Self.ProjectComplete.Popup.isVisible()) {
+          Result = true;
+          return Result;
+        } else if ((cInd === 0) && (nValue != "")) {
+          cell = Self.Grid.cells(rId,cInd).cell;
+          rect = cell.getBoundingClientRect();
+          if (!Self.ProjectComplete.Popup.isVisible()) Self.ProjectComplete.Popup.show(rect.left,rect.top,rect.width,rect.height);
+        };
+        return Result;
+      };
+      function DoGridKeyPress(code, cFlag, sFlag) {
+        var Result = false;
+        var tmp = null;
+        if (Self.ProjectComplete.Popup.isVisible()) {
+          tmp = Self.Grid.cells(Self.Grid.getSelectedRowId(),Self.Grid.getSelectedCellIndex());
+          Self.ProjectComplete.DoFilter(tmp.getValue(),false);
+        };
+        return Result;
+      };
+      pas.AvammForms.TAvammListForm.Create$2.call(Self,aParent,aDataSet,"1C");
+      var $with1 = Self.Grid;
       $with1.setHeader("Projekt,Aufgabe,Dauer (h),Notiz");
       $with1.setColumnIds("PROJECT,JOB,DURATION,NOTE");
       $with1.setColValidators("NotEmpty,NotEmpty,ValidTime,null");
@@ -119,8 +162,13 @@
       $with1.enableValidation();
       $with1.setEditable(true);
       $with1.init();
-      this.FDataLink.FDataprocessor.init(this.Grid);
-      var $with2 = this.Toolbar;
+      Self.FDataLink.FDataprocessor.init(Self.Grid);
+      Self.ProjectComplete = pas.AvammAutocomplete.TAvammAutoComplete.$create("Create$1",[null,"projects","ID","Projekt,Nummer,ID","NAME,NUMBER,ID",'lower("NAME") like lower(\'%FILTERVALUE%\')',500,200]);
+      Self.ProjectComplete.FDblClick = rtl.createCallback(Self,"CompleteProjectDblClick");
+      Self.Grid.attachEvent("onEditCell",DoEditgridCell);
+      Self.Grid.attachEvent("onKeyPress",DoGridKeyPress);
+      Self.ProjectComplete.Grid.setColumnHidden(2,true);
+      var $with2 = Self.Toolbar;
       $with2.addButton("save",0,"","fa fa-save","fa fa-save");
       $with2.setItemToolTip("save",rtl.getResStr(pas.AvammForms,"strSave"));
       $with2.addButton("new",1,"","fa fa-plus-circle","fa fa-plus-circle");
@@ -133,11 +181,11 @@
       $with2.addButton("daten",6,"","fa fa-chevron-right");
       $with2.addSeparator("sep2",7);
       $with2.disableItem("save");
-      this.FDataSet.FFieldDefsLoaded = rtl.createCallback(this,"DataSetAfterOpen");
-      eDate = this.Toolbar.getInput("datea");
+      Self.FDataSet.FFieldDefsLoaded = rtl.createCallback(Self,"DataSetAfterOpen");
+      eDate = Self.Toolbar.getInput("datea");
       cDate = new dhtmlXCalendarObject(eDate);
       cDate.setDateFormat(pas.dhtmlx_calendar.DateFormatToDHTMLX(pas.SysUtils.ShortDateFormat));
-      cDate.attachEvent("onChange",rtl.createCallback(this,"RefreshList"));
+      cDate.attachEvent("onChange",rtl.createCallback(Self,"RefreshList"));
     };
     this.RefreshList = function () {
       var Self = this;

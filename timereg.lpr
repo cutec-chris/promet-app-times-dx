@@ -1,6 +1,6 @@
 library timereg;
   uses js, web, classes, Avamm, webrouter, AvammForms, SysUtils, db,
-    dhtmlx_calendar,dhtmlx_base;
+    dhtmlx_calendar,dhtmlx_base, dhtmlx_grid, AvammAutocomplete;
 
 type
 
@@ -8,10 +8,12 @@ type
 
   TTimeregForm = class(TAvammListForm)
   private
+    ProjectComplete: TAvammAutoComplete;
     procedure DataSetAfterOpen(DataSet: TObject);
     procedure DataSetGetText(Sender: TField; var aText: string;
       DisplayText: Boolean);
     procedure DataSetSetText(Sender: TField; const aText: string);
+    procedure CompleteProjectDblClick(Sender : TObject);
   protected
     procedure ToolbarButtonClick(id : string);override;
     function DoRowDblClick : Boolean; override;
@@ -103,6 +105,21 @@ begin
   end;
 end;
 
+procedure TTimeregForm.CompleteProjectDblClick(Sender: TObject);
+begin
+  if (DataSet.State in [dsInsert]) or (DataSet.Locate('SQL_ID',Grid.getSelectedRowId(),[])) then
+    begin
+      if not (DataSet.State in [dsInsert]) then
+        DataSet.Edit;
+      DataSet.FieldByName('PROJECT').AsString := 'PROJECTS@'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue()+'{'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue()+'}';
+      Grid.cells(Grid.getSelectedRowId(),0).setValue(ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue());
+      //Grid.cells(Grid.getSelectedRowId(),5).setValue(ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue());
+      ProjectComplete.Popup.hide();
+      ProjectComplete.Grid.clearSelection();
+      Toolbar.enableItem('save');
+    end;
+end;
+
 procedure TTimeregForm.ToolbarButtonClick(id : string);
 var
   tmp: String;
@@ -177,6 +194,35 @@ constructor TTimeregForm.Create(aParent: TJSElement; aDataSet: string;
 var
   eDate : JSValue;
   cDate : TDHTMLXCalendar;
+  function DoEditgridCell(stage : Integer;rId : JSValue;cInd : Integer;nValue,oValue : JSValue) : Boolean;
+  var
+    cell: TJSHTMLElement;
+    rect: TJSDOMRect;
+  begin
+    Result := true;
+    if ((stage = 2) and (not ProjectComplete.Popup.isVisible())) then //validation
+      begin
+        Result := true;
+        exit;
+      end
+    else if ((cInd=0) and (nValue<>'')) then
+      begin
+        cell := Grid.cells(rId, cInd).cell;
+      	rect := cell.getBoundingClientRect();
+        if (not ProjectComplete.Popup.isVisible()) then
+          ProjectComplete.Popup.show(rect.left, rect.top,rect.width,rect.height);
+      end;
+  end;
+  function DoGridKeyPress(code,cFlag,sFlag : JSValue) : Boolean;
+  var
+    tmp: TDHTMLXGridCellObject;
+  begin
+    if ((ProjectComplete.Popup.isVisible())) then
+      begin
+        tmp := Grid.cells(Grid.getSelectedRowId(), Grid.getSelectedCellIndex());
+        ProjectComplete.DoFilter(tmp.getValue());
+      end;
+  end;
 begin
   inherited Create(aParent, aDataSet);
   with Grid do
@@ -191,6 +237,11 @@ begin
       init();
       DataLink.Dataprocessor.init(Grid);
     end;
+  ProjectComplete := TAvammAutoComplete.Create(null,'projects','ID','Projekt,Nummer,ID','NAME,NUMBER,ID','lower("NAME") like lower(''%FILTERVALUE%'')',500);
+  ProjectComplete.OnDblClick:=@CompleteProjectDblClick;
+  Grid.attachEvent('onEditCell',@DoEditgridCell);
+  Grid.attachEvent('onKeyPress',@DoGridKeyPress);
+  ProjectComplete.grid.setColumnHidden(2,true);
   with Toolbar do
     begin
       addButton('save',0,'','fa fa-save','fa fa-save');
