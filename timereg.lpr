@@ -160,7 +160,9 @@ begin
   else if (id='new') then
     begin
       DataSet.Append;
-      DataSet.FieldByName('START').AsDateTime := Now();
+      tmp := string(Toolbar.getValue('datea'));
+      TryStrToDate(tmp,aDate);
+      DataSet.FieldByName('START').AsDateTime :=  Trunc(aDate)+Frac(Now());
       DataSet.FieldByName('ISPAUSE').AsString := 'N';
       Toolbar.enableItem('save');
     end

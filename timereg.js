@@ -103,7 +103,13 @@
         pas.AvammForms.CheckSaved(Self.Toolbar).then(DoDateN).catch(DoNothing);
       } else if (id === "new") {
         Self.FDataSet.Append();
-        Self.FDataSet.FieldByName("START").SetAsDateTime(pas.SysUtils.Now());
+        tmp = "" + Self.Toolbar.getValue("datea");
+        pas.SysUtils.TryStrToDate(tmp,{get: function () {
+            return aDate;
+          }, set: function (v) {
+            aDate = v;
+          }});
+        Self.FDataSet.FieldByName("START").SetAsDateTime(pas.System.Trunc(aDate) + pas.System.Frac(pas.SysUtils.Now()));
         Self.FDataSet.FieldByName("ISPAUSE").SetAsString("N");
         Self.Toolbar.enableItem("save");
       } else if (id === "delete") {
