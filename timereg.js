@@ -55,6 +55,7 @@
         if (!(this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsInsert))) this.FDataSet.Edit();
         this.FDataSet.FieldByName("PROJECT").SetAsString(((("PROJECTS@" + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),2).getValue()) + "{") + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue()) + "}");
         this.Grid.cells(this.Grid.getSelectedRowId(),0).setValue(this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue());
+        this.FDataSet.FieldByName("PROJECTID").SetAsString(this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),2).getValue());
         this.ProjectComplete.Popup.hide();
         this.ProjectComplete.Grid.clearSelection();
         this.Toolbar.enableItem("save");

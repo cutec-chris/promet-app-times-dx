@@ -113,7 +113,7 @@ begin
         DataSet.Edit;
       DataSet.FieldByName('PROJECT').AsString := 'PROJECTS@'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue()+'{'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue()+'}';
       Grid.cells(Grid.getSelectedRowId(),0).setValue(ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue());
-      //Grid.cells(Grid.getSelectedRowId(),5).setValue(ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue());
+      DataSet.FieldByName('PROJECTID').AsString := ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue();
       ProjectComplete.Popup.hide();
       ProjectComplete.Grid.clearSelection();
       Toolbar.enableItem('save');
