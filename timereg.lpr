@@ -240,6 +240,13 @@ begin
       DataLink.Dataprocessor.init(Grid);
     end;
   ProjectComplete := TAvammAutoComplete.Create(null,'projects','ID','Projekt,Nummer,ID','NAME,NUMBER,ID','lower("NAME") like lower(''%FILTERVALUE%'')',500);
+  with ProjectComplete.Grid do
+    begin
+      //setHeader('Projekt,Nummer');
+      //setColumnIds('NAME,NUMBER');
+      //setInitWidthsP('70,30');
+      //init();
+    end;
   ProjectComplete.OnDblClick:=@CompleteProjectDblClick;
   Grid.attachEvent('onEditCell',@DoEditgridCell);
   Grid.attachEvent('onKeyPress',@DoGridKeyPress);
