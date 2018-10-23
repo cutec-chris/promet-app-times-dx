@@ -292,7 +292,7 @@ begin
   except
     on e : Exception do
       begin
-        writeln('Refresh Exception:'+e.message);
+        console.log('Refresh Exception:'+e.message);
         Page.progressOff();
       end;
   end;
