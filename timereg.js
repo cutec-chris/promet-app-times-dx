@@ -53,9 +53,9 @@
     this.CompleteProjectDblClick = function (Sender) {
       if ((this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsInsert)) || this.FDataSet.Locate("SQL_ID",this.Grid.getSelectedRowId(),{})) {
         if (!(this.FDataSet.FState in rtl.createSet(pas.DB.TDataSetState.dsInsert))) this.FDataSet.Edit();
-        this.FDataSet.FieldByName("PROJECT").SetAsString(((("PROJECTS@" + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),2).getValue()) + "{") + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue()) + "}");
+        this.FDataSet.FieldByName("PROJECT").SetAsString(((("PROJECTS.ID@" + ("" + this.ProjectComplete.Grid.getSelectedRowId())) + "{") + this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue()) + "}");
         this.Grid.cells(this.Grid.getSelectedRowId(),0).setValue(this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),0).getValue());
-        this.FDataSet.FieldByName("PROJECTID").SetAsString(this.ProjectComplete.Grid.cells(this.ProjectComplete.Grid.getSelectedRowId(),2).getValue());
+        this.FDataSet.FieldByName("PROJECTID").SetAsString("" + this.ProjectComplete.Grid.getSelectedRowId());
         this.ProjectComplete.Popup.hide();
         this.ProjectComplete.Grid.clearSelection();
         this.Toolbar.enableItem("save");
@@ -211,7 +211,7 @@
       } catch ($e) {
         if (pas.SysUtils.Exception.isPrototypeOf($e)) {
           var e = $e;
-          pas.System.Writeln("Refresh Exception:" + e.fMessage);
+          window.console.log("Refresh Exception:" + e.fMessage);
           Self.Page.progressOff();
         } else throw $e
       };

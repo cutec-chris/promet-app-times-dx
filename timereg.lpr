@@ -111,9 +111,9 @@ begin
     begin
       if not (DataSet.State in [dsInsert]) then
         DataSet.Edit;
-      DataSet.FieldByName('PROJECT').AsString := 'PROJECTS@'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue()+'{'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue()+'}';
+      DataSet.FieldByName('PROJECT').AsString := 'PROJECTS.ID@'+string(ProjectComplete.Grid.getSelectedRowId())+'{'+ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue()+'}';
       Grid.cells(Grid.getSelectedRowId(),0).setValue(ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),0).getValue());
-      DataSet.FieldByName('PROJECTID').AsString := ProjectComplete.Grid.cells(ProjectComplete.Grid.getSelectedRowId(),2).getValue();
+      DataSet.FieldByName('PROJECTID').AsString := string(ProjectComplete.Grid.getSelectedRowId());
       ProjectComplete.Popup.hide();
       ProjectComplete.Grid.clearSelection();
       Toolbar.enableItem('save');
