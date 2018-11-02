@@ -84,7 +84,6 @@ begin
   case Sender.FieldName of
   'PROJECT':
     begin
-      //TODO
       if Sender.AsString<>'' then
         begin
           tmp := Sender.AsString;
@@ -92,8 +91,9 @@ begin
             begin
               tmp := copy(tmp,0,pos('{',tmp));
               tmp := tmp+aText+'}';
-              Sender.AsString:=tmp;
-            end;
+            end
+          else tmp := atext;
+          Sender.AsString:=tmp;
         end
       else
         Sender.AsString:=aText;
