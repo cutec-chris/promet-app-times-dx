@@ -36,7 +36,14 @@
       this.Toolbar.enableItem("save");
       var $tmp1 = Sender.FFieldName;
       if ($tmp1 === "PROJECT") {
-        Sender.SetAsString(aText);
+        if (Sender.GetAsString() !== "") {
+          tmp = Sender.GetAsString();
+          if (pas.System.Pos("{",tmp) > 0) {
+            tmp = pas.System.Copy(tmp,0,pas.System.Pos("{",tmp));
+            tmp = (tmp + aText) + "}";
+            Sender.SetAsString(tmp);
+          };
+        } else Sender.SetAsString(aText);
       } else if ($tmp1 === "DURATION") {
         tmp = pas.System.Copy(aText,pas.System.Pos(" ",aText) + 1,aText.length);
         var $tmp2 = pas.SysUtils.LowerCase(tmp);

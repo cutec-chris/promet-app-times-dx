@@ -85,7 +85,18 @@ begin
   'PROJECT':
     begin
       //TODO
-      Sender.AsString:=aText;
+      if Sender.AsString<>'' then
+        begin
+          tmp := Sender.AsString;
+          if pos('{',tmp)>0 then
+            begin
+              tmp := copy(tmp,0,pos('{',tmp));
+              tmp := tmp+aText+'}';
+              Sender.AsString:=tmp;
+            end;
+        end
+      else
+        Sender.AsString:=aText;
     end;
   'DURATION':
     begin
