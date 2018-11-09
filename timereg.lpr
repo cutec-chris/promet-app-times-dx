@@ -250,7 +250,7 @@ begin
       init();
       DataLink.Dataprocessor.init(Grid);
     end;
-  ProjectComplete := TAvammAutoComplete.Create(null,'projects','ID','Projekt,Nummer,ID','NAME,NUMBER,ID','lower("NAME") like lower(''%FILTERVALUE%'')',500);
+  ProjectComplete := TAvammAutoComplete.Create(null,'projects','ID','Projekt,Nummer,ID','NAME,NUMBER,ID','lower("NAME") like lower(''%FILTERVALUE%'') or "ID" like ''FILTERVALUE%''',500);
   with ProjectComplete.Grid do
     begin
       //setHeader('Projekt,Nummer');

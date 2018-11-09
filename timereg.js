@@ -177,7 +177,7 @@
       $with1.setEditable(true);
       $with1.init();
       Self.FDataLink.FDataprocessor.init(Self.Grid);
-      Self.ProjectComplete = pas.AvammAutocomplete.TAvammAutoComplete.$create("Create$1",[null,"projects","ID","Projekt,Nummer,ID","NAME,NUMBER,ID",'lower("NAME") like lower(\'%FILTERVALUE%\')',500,200]);
+      Self.ProjectComplete = pas.AvammAutocomplete.TAvammAutoComplete.$create("Create$1",[null,"projects","ID","Projekt,Nummer,ID","NAME,NUMBER,ID",'lower("NAME") like lower(\'%FILTERVALUE%\') or "ID" like \'FILTERVALUE%\'',500,200]);
       var $with2 = Self.ProjectComplete.Grid;
       Self.ProjectComplete.FDblClick = rtl.createCallback(Self,"CompleteProjectDblClick");
       Self.Grid.attachEvent("onEditCell",DoEditgridCell);
